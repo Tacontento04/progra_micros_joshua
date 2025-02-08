@@ -1,10 +1,10 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm Fri Feb 07 16:07:15 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm Fri Feb 07 18:45:36 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
+C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
+C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
                                  
                                  ;**********************************************************
                                  
@@ -1062,72 +1062,119 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra d
                                  SETUP:
                                  	//Configuracion de pines de entrada y salida (DDRx, Portx, PINX)
                                  	// PORTD con entrada pull-up habilitado 
-000004 ef00                      	LDI		R16, 0b1111_0000		 //Queremos activar los pines d0, d1, d2 d3 como entradas y el resto como salidas
+000004 e000                      	LDI		R16, 0x00		 //Configuramos el portd como entrada 
 000005 b90a                      	OUT		DDRD, R16
-000006 e00f                      	LDI		R16, 0b0000_1111		 //Cambiamos R16 para que ahora sean pull-ups el port d0, d1, d2, d3
+000006 ef0f                      	LDI		R16, 0xFF	 //Cambiamos R16 para que ahora sean pull-ups el port d 
 000007 b90b                      	OUT		PORTD, R16
                                  	
+000008 ef0f                      	LDI		R16, 0xFF
+000009 b904                      	OUT		DDRB, R16
                                  	// Usamos R17 para guardar el estado de los botones inicialmente encendidos
-000008 ef1f                      	LDI R17, 0xFF
+00000a ef1f                      	LDI R17, 0xFF
                                  
                                  	// Usamos r19 como nuestro contador 
-000009 e030                      	LDI R19, 0x00
+00000b e030                      	LDI R19, 0x00
+                                 
+                                 	// Usamos R20 como contador
+00000c e040                      	LDI R20, 0x00
                                  
                                  ;********************************************
                                  ;LOOP INFINITO 
                                  ;******************************************
                                  void_loop:
-00000a b109                      	IN		R16, PIND		//Revisamos si el el boton fue presionado
-00000b 1710                      	CP		R17, R16		// Si no hay cambio basamos a void de nuevo
-00000c f3e9                      	BREQ	void_loop
-00000d 940e 0025                 	CALL	DELAY			// si hay cambio nos saltamos a BREQ y hacemos el delay
-00000f b109                      	IN		R16, PIND
-000010 1710                      	CP		R17, R16
-000011 f3c1                      	BREQ	void_loop		// hacemos lo mismo 2 veces si si hubo un cambio 
+00000d b109                      	IN		R16, PIND		//Revisamos si el el boton fue presionado
+00000e 1710                      	CP		R17, R16		// Si no hay cambio basamos a void de nuevo
+00000f f3e9                      	BREQ	void_loop
+000010 940e 0047                 	CALL	DELAY			// si hay cambio nos saltamos a BREQ y hacemos el delay
+000012 b109                      	IN		R16, PIND
+000013 1710                      	CP		R17, R16
+000014 f3c1                      	BREQ	void_loop		// hacemos lo mismo 2 veces si si hubo un cambio 
+                                 
+000015 2f10                      	MOV		R17, R16		// Guardamos el estado nuevo 
+                                 	
+000016 fd02                      	SBRC	R16, 2
+000017 940e 0034                 	CALL	PINND
+000019 fd03                      	SBRC	R16, 3
+00001a 940e 0034                 	CALL	PINND 	
+                                 
+00001c fd04                      	SBRC	R16, 4
+00001d 940e 0023                 	CALL	PINNC
+00001f fd05                      	SBRC	R16, 5
+000020 940e 0023                 	CALL	PINNC
                                  
                                  
-000012 ff00                      	sbrs	R16, PIND0 // Este pin sera el boton de decrementar
-000013 940e 0019                 	CALL	DECREMENTAR	// si el boton esta en set saltamos 
-000015 ff01                      	SBRS	R16, PIND1	// Este pin sera el boton de aumentar
-000016 940e 001e                 	CALL	AUMENTAR	// llamamos a aumentar
-000018 cff1                      	RJMP	void_loop
+000022 cfea                      	RJMP	void_loop	
+                                 		
+                                 
+                                 
+                                 
+                                 
+                                 PINNC:
+000023 ff04                      	sbrs	R16, 4 // Este pin sera el boton de decrementar
+000024 940e 002a                 	CALL	DECREMENTO	// si el boton esta en set saltamos 
+000026 ff05                      	SBRS	R16, 5	// Este pin sera el boton de aumentar
+000027 940e 002f                 	CALL	AUMENTO	// llamamos a aumentar
+000029 cfe3                      	RJMP	void_loop
+                                 
+                                 
+                                 DECREMENTO:
+00002a 3040                      	CPI		R20, 0x00	// Comparamos si es igual a 0 no hacemos nada
+00002b f309                      	BREQ	void_loop	
+00002c 954a                      	dec		r20
+00002d b938                      	out		PORTC,	r19
+00002e 9508                      	ret
+                                 
+                                 AUMENTO:
+00002f 304f                      	CPI	R20, 0x0F		// Comparamos para ver si es 15 si lo es entonces saltamos
+000030 f0a1                      	BREQ RESETEO		// reseteamos el registro
+000031 9543                      	inc r20
+000032 b938                      	out	PORTC, R19
+000033 9508                      	RET
+                                 
+                                 
+                                 PINND: 
+000034 ff02                      	sbrs	R16, 2 // Este pin sera el boton de decrementar
+000035 940e 003b                 	CALL	DECREMENTAR	// si el boton esta en set saltamos 
+000037 ff03                      	SBRS	R16, 3	// Este pin sera el boton de aumentar
+000038 940e 0040                 	CALL	AUMENTAR	// llamamos a aumentar
+00003a cfd2                      	RJMP	void_loop
                                  
                                  
                                  DECREMENTAR:
-000019 3030                      	CPI		R19, 0x00	// Comparamos si es igual a 0 no hacemos nada
-00001a f379                      	BREQ	void_loop	
-00001b 951a                      	dec		r17
-00001c b91b                      	out		PORTD,	r17
-00001d 9508                      	ret
+00003b 3030                      	CPI		R19, 0x00	// Comparamos si es igual a 0 no hacemos nada
+00003c f281                      	BREQ	void_loop	
+00003d 953a                      	dec		r19
+00003e b935                      	out		PORTB,	r19
+00003f 9508                      	ret
                                  
                                  AUMENTAR:
-00001e 303f                      	CPI	R19, 0x0F		// Comparamos para ver si es 15 si lo es entonces saltamos
-00001f f019                      	BREQ RESETEO		// reseteamos el registro
-000020 9513                      	inc r17
-000021 b91b                      	out	PORTD, R17
-000022 9508                      	RET
+000040 303f                      	CPI	R19, 0x0F		// Comparamos para ver si es 15 si lo es entonces saltamos
+000041 f019                      	BREQ RESETEO		// reseteamos el registro
+000042 9533                      	inc r19
+000043 b935                      	out	PORTB, R19
+000044 9508                      	RET
                                  
                                  RESETEO:
-000023 e030                      	LDI	R19, 0x00		// reseteamos el registro
-000024 cfe5                      	RJMP void_loop			// regresamos a main
+000045 e030                      	LDI	R19, 0x00		// reseteamos el registro
+000046 cfc6                      	RJMP void_loop			// regresamos a main
                                  
                                  DELAY:
-000025 ef2f                      	LDI		R18, 0xFF
+000047 ef2f                      	LDI		R18, 0xFF
                                  SUB_DELAY1:
-000026 952a                      	DEC		R18
-000027 3020                      	CPI		R18, 0
-000028 f7e9                      	BRNE	SUB_DELAY1
-000029 ef2f                      	LDI		R18, 0xFF
+000048 952a                      	DEC		R18
+000049 3020                      	CPI		R18, 0
+00004a f7e9                      	BRNE	SUB_DELAY1
+00004b ef2f                      	LDI		R18, 0xFF
                                  SUB_DELAY2:
-00002a 952a                      	DEC		R18
-00002b 3020                      	CPI		R18, 0
-00002c f7e9                      	BRNE	SUB_DELAY2
-00002d ef2f                      	LDI		R18, 0xFF
+00004c 952a                      	DEC		R18
+00004d 3020                      	CPI		R18, 0
+00004e f7e9                      	BRNE	SUB_DELAY2
+00004f ef2f                      	LDI		R18, 0xFF
                                  SUB_DELAY3:
-00002e 952a                      	DEC		R18
-00002f 3020                      	CPI		R18, 0
-000030 f7e9                      	BRNE	SUB_DELAY3
-000031 9508                      	RET
+000050 952a                      	DEC		R18
+000051 3020                      	CPI		R18, 0
+000052 f7e9                      	BRNE	SUB_DELAY3
+000053 9508                      	RET
                                  
                                  	
                                  
@@ -1156,37 +1203,37 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  14 r17:   7 r18:   9 r19:   4 r20:   0 
+r13:   0 r14:   0 r15:   0 r16:  23 r17:   4 r18:   9 r19:  10 r20:   5 
 r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   0 r31:   0 
-Registers used: 4 out of 35 (11.4%)
+Registers used: 5 out of 35 (14.3%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   4 brge  :   0 brhc  :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :   6 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   3 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   3 cbi   :   0 cbr   :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   9 cbi   :   0 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   2 cpc   :   0 
-cpi   :   5 cpse  :   0 dec   :   4 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   2 inc   :   1 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :  10 lds   :   0 lpm   :   0 lsl   :   0 
-lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   6 pop   :   0 
-push  :   0 rcall :   0 ret   :   3 reti  :   0 rjmp  :   2 rol   :   0 
+cpi   :   7 cpse  :   0 dec   :   5 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   2 inc   :   2 jmp   :   0 
+ld    :   0 ldd   :   0 ldi   :  12 lds   :   0 lpm   :   0 lsl   :   0 
+lsr   :   0 mov   :   1 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
+neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   9 pop   :   0 
+push  :   0 rcall :   0 ret   :   5 reti  :   0 rjmp  :   4 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
-sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   2 sec   :   0 seh   :   0 
+sbiw  :   0 sbr   :   0 sbrc  :   4 sbrs  :   4 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   0 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 13 out of 113 (11.5%)
+Instructions used: 15 out of 113 (13.3%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000064    100      0    100   32768   0.3%
+[.cseg] 0x000000 0x0000a8    168      0    168   32768   0.5%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

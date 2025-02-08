@@ -1,19 +1,19 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.8</VERSION>
  <DEVICE>"ATmega328P"</DEVICE>
- <WORKING_DIR>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\Debug</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc</DIR>
   <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc</FILE>
   <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\Debug\Prelab1.obj</FILE>
+  <FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\Debug\Prelab1.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>Prelab1.hex</FILE>
@@ -23,14 +23,18 @@
   <FILE>Prelab1.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <SETUP><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>31</LINE></SETUP>
-  <void_loop><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>48</LINE></void_loop>
-  <DELAY><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>83</LINE></DELAY>
-  <DECREMENTAR><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>65</LINE></DECREMENTAR>
-  <AUMENTAR><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>72</LINE></AUMENTAR>
-  <RESETEO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>79</LINE></RESETEO>
-  <SUB_DELAY1><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>85</LINE></SUB_DELAY1>
-  <SUB_DELAY2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>90</LINE></SUB_DELAY2>
-  <SUB_DELAY3><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Escritorio\Progra de micros\Prelab1\Prelab1\main.asm</FILE><LINE>95</LINE></SUB_DELAY3>
+  <SETUP><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>31</LINE></SETUP>
+  <void_loop><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>53</LINE></void_loop>
+  <DELAY><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>130</LINE></DELAY>
+  <PINND><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>104</LINE></PINND>
+  <PINNC><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>81</LINE></PINNC>
+  <DECREMENTO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>89</LINE></DECREMENTO>
+  <AUMENTO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>96</LINE></AUMENTO>
+  <RESETEO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>126</LINE></RESETEO>
+  <DECREMENTAR><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>112</LINE></DECREMENTAR>
+  <AUMENTAR><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>119</LINE></AUMENTAR>
+  <SUB_DELAY1><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>132</LINE></SUB_DELAY1>
+  <SUB_DELAY2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>137</LINE></SUB_DELAY2>
+  <SUB_DELAY3><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab1\Prelab1\main.asm</FILE><LINE>142</LINE></SUB_DELAY3>
  </LABELS>
 </ASSEMBLER_INFO>
