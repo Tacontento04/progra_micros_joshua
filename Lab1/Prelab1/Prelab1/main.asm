@@ -31,44 +31,48 @@ OUT SPH, R16
 SETUP:
 	//Configuracion de pines de entrada y salida (DDRx, Portx, PINX)
 	// PORTD con entrada pull-up habilitado 
-	LDI		R16, 0x00		 //Configuramos el portd como entrada 
+	LDI		R16, 0xFF		 //Configuramos el purto D como salida
 	OUT		DDRD, R16
-	LDI		R16, 0xFF	 //Cambiamos R16 para que ahora sean pull-ups el port d 
-	OUT		PORTD, R16
 	
-	LDI		R16, 0xFF
+	
+	LDI		R16, 0xFF		 //Configuramos el purto C como salida
+	OUT		DDRC, R16
+
+	
+	LDI		R16, 0x00		// Configuramos el puerto B como entrada 
 	OUT		DDRB, R16
+	LDI		R16, 0xFF		//Activamos pull up
+	OUT		PORTB, R16
+
 	// Usamos R17 para guardar el estado de los botones inicialmente encendidos
-	LDI R17, 0xFF
+	LDI	R17, 0xFF
 
 	// Usamos r19 como nuestro contador 
 	LDI R19, 0x00
 
 	// Usamos R20 como contador
 	LDI R20, 0x00
-
 ;********************************************
 ;LOOP INFINITO 
 ;******************************************
 void_loop:
-	IN		R16, PIND		//Revisamos si el el boton fue presionado
-	CP		R17, R16		// Si no hay cambio basamos a void de nuevo
+	IN		R16, PINB		//Revisamos si el el boton fue presionado
+	CP		R17, R16		// Si no hay cambio pasamos a void de nuevo
 	BREQ	void_loop
 	CALL	DELAY			// si hay cambio nos saltamos a BREQ y hacemos el delay
-	IN		R16, PIND
+	IN		R16, PINB
 	CP		R17, R16
-	BREQ	void_loop		// hacemos lo mismo 2 veces si si hubo un cambio 
-
+	BREQ	void_loop		// hacemos lo mismo 2 veces si si hubo un cambio
 	MOV		R17, R16		// Guardamos el estado nuevo 
 	
-	SBRC	R16, 2
+	SBRS	R16, 2
 	CALL	PINND
-	SBRC	R16, 3
+	SBRS	R16, 3
 	CALL	PINND 	
 
-	SBRC	R16, 4
+	SBRS	R16, 0
 	CALL	PINNC
-	SBRC	R16, 5
+	SBRS	R16, 1
 	CALL	PINNC
 
 
@@ -76,12 +80,10 @@ void_loop:
 		
 
 
-
-
 PINNC:
-	sbrs	R16, 4 // Este pin sera el boton de decrementar
+	sbrs	R16, 0 // Este pin sera el boton de decrementar
 	CALL	DECREMENTO	// si el boton esta en set saltamos 
-	SBRS	R16, 5	// Este pin sera el boton de aumentar
+	SBRS	R16, 1	// Este pin sera el boton de aumentar
 	CALL	AUMENTO	// llamamos a aumentar
 	RJMP	void_loop
 
@@ -90,15 +92,19 @@ DECREMENTO:
 	CPI		R20, 0x00	// Comparamos si es igual a 0 no hacemos nada
 	BREQ	void_loop	
 	dec		r20
-	out		PORTC,	r19
+	out		PORTC,	r20
 	ret
 
 AUMENTO:
 	CPI	R20, 0x0F		// Comparamos para ver si es 15 si lo es entonces saltamos
-	BREQ RESETEO		// reseteamos el registro
+	BREQ RESET		// reseteamos el registro
 	inc r20
-	out	PORTC, R19
+	out	PORTC, R20
 	RET
+
+	RESET:
+	LDI	R20, 0x00		// reseteamos el registro
+	RJMP void_loop			// regresamos a main
 
 
 PINND: 
@@ -113,14 +119,14 @@ DECREMENTAR:
 	CPI		R19, 0x00	// Comparamos si es igual a 0 no hacemos nada
 	BREQ	void_loop	
 	dec		r19
-	out		PORTB,	r19
+	out		PORTD,	r19
 	ret
 
 AUMENTAR:
 	CPI	R19, 0x0F		// Comparamos para ver si es 15 si lo es entonces saltamos
 	BREQ RESETEO		// reseteamos el registro
 	inc r19
-	out	PORTB, R19
+	out	PORTD, R19
 	RET
 
 RESETEO:
