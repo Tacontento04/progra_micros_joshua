@@ -30,7 +30,7 @@ OUT SPH, R16
 ;***********************************************
 SETUP:
 	//CONFIGURAMOS EL PRESCALER PRINCIPAL
-	LDI		R16, (1 << CLKPCE)		// Habilitar cambio de prescaler
+	LDI		R16, (1 << CLKPCE)		// Habilitar cambio de prescaler 00000010
 	STS		CLKPR, R16
 	LDI		R16, (1 << CLKPS2)
 	STS		CLKPR, R16				// CONFIGURAMOS PRESCALER A 16 F_CPU = 1Mhz
@@ -57,7 +57,7 @@ SETUP:
 
 	// Usamos R20 como contador
 	LDI R20, 0x00
-
+	
 ;********************************************
 ;LOOP INFINITO 
 ;******************************************
@@ -71,12 +71,12 @@ void_loop:
 	BREQ	void_loop		// hacemos lo mismo 2 veces si si hubo un cambio
 	MOV		R17, R16		// Guardamos el estado nuevo 
 	
-	SBRS	R16, 2
+	SBRS	R16, 2			//botones para contador 1
 	CALL	PINND
 	SBRS	R16, 3
 	CALL	PINND 	
 
-	SBRS	R16, 0
+	SBRS	R16, 0			//botones para contador 2
 	CALL	PINNC
 	SBRS	R16, 1
 	CALL	PINNC
@@ -141,21 +141,20 @@ RESETEO:
 	RJMP void_loop			// regresamos a main
 
 UPDATE_PORTD:
-	MOV		R21, R19
-	ANDI	R21, 0x0F
-    SWAP    R21            
-	OR		R21, R20
+	MOV		R21, R19		//movemos el contador a r21
+	ANDI	R21, 0x0F		// quitamos el excedente de bits 
+    SWAP    R21				// movemos el nibble alto al bajo 
+	OR		R21, R20		// con esto juntamos los bits
 	OUT		PORTD, R21
     RET
 
 SUMADOR: 
-    LDI     R22, 0x00 
-    MOV     R22, R19
-    ANDI    R22, 0x0F    
-    ANDI    R20, 0x0F    
-    ADD     R22, R20     
+    LDI     R22, 0x00	//Reinciamos el registro
+    MOV     R22, R19	// movemos el registro r19 al 22
+    ANDI    R22, 0x0F    // quitamos excedente de bits
+    ANDI    R20, 0x0F    // quitamos excedente de bits
+    ADD     R22, R20	//sumamos
 
-    ; Guardar el resultado antes de modificar PORTC
        
     OUT     PORTC, R22  
 

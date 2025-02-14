@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Lab1\Prelab1\Prelab1\main.asm Fri Feb 14 04:09:26 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab2\Prelab2\main.asm Fri Feb 14 02:42:43 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -695,19 +695,7 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
-CSEG SETUP        00000004
-CSEG void_loop    00000016
-CSEG DELAY        00000067
-CSEG PINND        00000046
-CSEG PINNC        00000033
-CSEG SUMADOR      00000060
-CSEG UPDATE_PORTD 0000005a
-CSEG DECREMENTO   0000003a
-CSEG AUMENTO      0000003f
-CSEG RESET        00000044
-CSEG DECREMENTAR  0000004d
-CSEG AUMENTAR     00000052
-CSEG RESETEO      00000058
-CSEG SUB_DELAY1   00000068
-CSEG SUB_DELAY2   0000006c
-CSEG SUB_DELAY3   00000070
+CSEG setup        00000005
+CSEG void_loop    00000018
+CSEG esperar_100ms 0000001b
+CSEG ajuste_tiempo 00000023
