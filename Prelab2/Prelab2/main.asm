@@ -48,7 +48,7 @@ SETUP:
 	LDI		R16, 0x00
 	OUT		TCCR0A, R16			// TCCR0A es el registro de control de TIMER0
 	// con 0x00 activamos el modo normal del timer0 
-	LDI		R16, (1 << CS01) | (1 << CS00)	// PRESCALER DE 64
+	LDI		R16, (1 << CS01) | (1 << CS00)	// PRESCALER DE 64  
 	OUT		TCCR0B, R16	
 	
 	// Configuracion para apagar los demas leds del arduino 
@@ -76,10 +76,6 @@ esperar_100ms:
 	DEC		R18
 	BRNE	esperar_100ms		// vuelve a 100ms hasta que r18 sea cero
 
-	LDI		R16, 26
-ajuste_tiempo:
-	DEC		R16
-	BRNE	ajuste_tiempo
 
 	INC		R17
 	ANDI	R17, 0x0F

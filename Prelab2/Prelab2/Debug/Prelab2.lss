@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab2\Prelab2\main.asm Fri Feb 14 02:42:43 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab2\Prelab2\main.asm Fri Feb 14 16:49:29 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab2\Prelab2\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
@@ -1089,35 +1089,28 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  	// R17 contador de 4 bits 
 000016 e010                      	LDI		R17, 0x00
                                  	
-000017 e053                      	LDI		R21, 0x03
                                  	
                                  
                                  void_loop:
-000018 e000                      	LDI		R16, 0x00
-000019 bd06                      	OUT		TCNT0, R16		// Reiniciamos el contador 
-00001a e026                      	LDI		R18, 6			// Vamos a repetir el proceso 6 veces
+000017 e000                      	LDI		R16, 0x00
+000018 bd06                      	OUT		TCNT0, R16		// Reiniciamos el contador 
+000019 e026                      	LDI		R18, 6			// Vamos a repetir el proceso 6 veces
                                  
                                  esperar_100ms:
-00001b b305                      	IN		R16, TIFR0		// lee la bandera de interrupcion del timer0
-00001c ff00                      	SBRS	R16, TOV0		// Salta a la siguiente si el bit de desborde no es set
-00001d cffd                      	RJMP	esperar_100ms
+00001a b305                      	IN		R16, TIFR0		// lee la bandera de interrupcion del timer0
+00001b ff00                      	SBRS	R16, TOV0		// Salta a la siguiente si el bit de desborde no es set
+00001c cffd                      	RJMP	esperar_100ms
                                  
-00001e e001                      	LDI		R16, (1 << TOV0)
-00001f bb05                      	OUT		TIFR0, R16		// Borra la bandera de desborde
+00001d e001                      	LDI		R16, (1 << TOV0)
+00001e bb05                      	OUT		TIFR0, R16		// Borra la bandera de desborde
                                  
-000020 952a                      	DEC		R18
-000021 f7c9                      	BRNE	esperar_100ms		// vuelve a 100ms hasta que r18 sea cero
+00001f 952a                      	DEC		R18
+000020 f7c9                      	BRNE	esperar_100ms		// vuelve a 100ms hasta que r18 sea cero
                                  
-000022 e10a                      	LDI		R16, 26
-                                 ajuste_tiempo:
-000023 950a                      	DEC		R16
-000024 f7f1                      	BRNE	ajuste_tiempo
+000021 9513                      	INC		R17
+000022 701f                      	ANDI	R17, 0x0F
                                  
-000025 9513                      	INC		R17
-000026 711f                      	ANDI	R17, 0x1F
-                                 
-000027 b918                      	OUT		PORTC, R17
-000028 b95b                      	OUT		PORTD, R21
+000023 b918                      	OUT		PORTC, R17
 
 
 RESOURCE USE INFORMATION
@@ -1137,25 +1130,25 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  26 r17:   4 r18:   2 r19:   0 r20:   0 
-r21:   2 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
+r13:   0 r14:   0 r15:   0 r16:  24 r17:   4 r18:   2 r19:   0 r20:   0 
+r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   0 r31:   0 
-Registers used: 4 out of 35 (11.4%)
+Registers used: 3 out of 35 (8.6%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
 andi  :   1 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   2 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brne  :   1 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   0 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   0 cpse  :   0 dec   :   2 eor   :   0 fmul  :   0 fmuls :   0 
+cpi   :   0 cpse  :   0 dec   :   1 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   1 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :  15 lds   :   0 lpm   :   0 lsl   :   0 
+ld    :   0 ldd   :   0 ldi   :  13 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  10 pop   :   0 
+neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   9 pop   :   0 
 push  :   0 rcall :   0 ret   :   0 reti  :   0 rjmp  :   3 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   1 sec   :   0 seh   :   0 
@@ -1167,7 +1160,7 @@ Instructions used: 10 out of 113 (8.8%)
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000054     84      0     84   32768   0.3%
+[.cseg] 0x000000 0x00004a     74      0     74   32768   0.2%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

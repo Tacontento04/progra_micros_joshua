@@ -76,6 +76,7 @@ SETUP:
 
 
 void_loop:
+
 	LDI		R16, 0x00
 	OUT		TCNT0, R16		// Reiniciamos el contador 
 	LDI		R18, 6			// Vamos a repetir el proceso 6 veces
@@ -91,17 +92,13 @@ esperar_100ms:
 	DEC		R18
 	BRNE	esperar_100ms		// vuelve a 100ms hasta que r18 sea cero
 
-	LDI		R16, 26
-ajuste_tiempo:
-	DEC		R16
-	BRNE	ajuste_tiempo
-
 	INC		R17
 	ANDI	R17, 0x0F
 
 	OUT		PORTC, R17
+
 	sbi	    PORTC, 4            ; Encender el pin C4	
-	
+
 
 
 
@@ -128,20 +125,31 @@ BOTONES:
 	RET
 
 aumento:
+	CPI		R20, 0x0F		// Comparamaos si es igual a 0x0F si no saltamos
+	BREQ	RESET			//reseteamos el contador
 	INC		R20
 	RET
 decremento: 
+	CPI		R20, 0x00		// Comparamos si es igual a 0 si restamos tenemos overflow
+	BREQ	MAXEO
 	DEC		R20
 	RET	
 
+RESET:	
+	LDI		R20, 0x00
+	RJMP	void_loop
 
-DISPLAY_UPDATE:
-    LDI ZH, HIGH(TABLE<<1)   ; Dirección alta de la tabla
-    LDI ZL, LOW(TABLE<<1)    ; Dirección baja de la tabla
-    ADD ZL, R20              ; Sumar el índice
-    ADC ZH, R1               ; Propagar el acarreo en caso de ser necesario (R1 siempre es 0)
-    LPM R16, Z               ; Leer el valor de la tabla
-    OUT PORTD, R16           ; Enviar a PORTD para mostrar en el display
+MAXEO:					//REiniciamos a su valor maximo 
+	LDI		R20, 0x0F
+	RJMP	void_loop
+
+DISPLAY_UPDATE:0
+    LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+    LDI		ZL, LOW(TABLE<<1)    
+    ADD		ZL, R20				 // R20 es nuestro contador
+    ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+    LPM		R16, Z               // Carga el byte Z en r16
+    OUT		PORTD, R16			 // display del valor deseado
 	CALL	DELAY 
     RJMP	void_loop
 
@@ -162,24 +170,25 @@ SUB_DELAY3:
 	CPI		R25, 0
 	BRNE	SUB_DELAY3
 	RET
+SUB_DELAY4:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY4
+	RET
+SUB_DELAY5:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY5
+	RET
+SUB_DELAY6:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY6
+	RET
+
 
 	
 
 ;*************** TABLA DE BÚSQUEDA ***************
 TABLE:
-    .DB 0x40  ; "0"
-    .DB 0x79  ; "1"
-    .DB 0x24  ; "2"
-    .DB 0x30  ; "3"
-    .DB 0x19  ; "4"
-    .DB 0x12  ; "5"
-    .DB 0x02  ; "6"
-    .DB 0x38  ; "7"
-    .DB 0x00  ; "8"
-    .DB 0x10  ; "9"
-    .DB 0x08  ; "A"
-    .DB 0x03  ; "B"
-    .DB 0x46  ; "C"
-    .DB 0x21  ; "D"
-    .DB 0x06  ; "E"
-    .DB 0x0E  ; "F"
+    .DB 0x40, 0x79, 0x24, 0x30, 0x19, 0x12, 0x02, 0x38, 0x00, 0x10, 0x08, 0x03, 0x46, 0x21, 0x06, 0x0E  
