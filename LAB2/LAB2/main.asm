@@ -76,43 +76,32 @@ SETUP:
 
 
 void_loop:
-
 	LDI		R16, 0x00
 	OUT		TCNT0, R16		// Reiniciamos el contador 
-	LDI		R18, 6			// Vamos a repetir el proceso 6 veces
-	
+	LDI		R18, 10			// 10 ciclos de ~100ms (1s)
+	CALL	DISPLAY_UPDATE 
 esperar_100ms:
-	IN		R16, TIFR0		// lee la bandera de interrupcion del timer0
-	SBRS	R16, TOV0		// Salta a la siguiente si el bit de desborde no es set
-	RJMP	esperar_100ms
+	LDI		R19, 6			// Esperar 6 desbordes de ~16.38ms
 
+esperar_overflow:
+	IN		R16, TIFR0		// Leer la bandera de interrupción del Timer0
+	SBRS	R16, TOV0		// Si no está en 1, sigue esperando
+	RJMP	esperar_overflow
 	LDI		R16, (1 << TOV0)
-	OUT		TIFR0, R16		// Borra la bandera de desborde
-
+	OUT		TIFR0, R16		// Borra la bandera de desbordamiento
+	DEC		R19
+	BRNE	esperar_overflow	// Espera hasta completar 6 desbordes (~100ms)
 	DEC		R18
-	BRNE	esperar_100ms		// vuelve a 100ms hasta que r18 sea cero
-
-	INC		R17
-	ANDI	R17, 0x0F
-
-	OUT		PORTC, R17
-
-	sbi	    PORTC, 4            ; Encender el pin C4	
-
-
-
-
-	// ANTIREBOTES 	
-	IN		R21, PINB		//Revisamos si el el boton fue presionad
-	CP		R23, R21		// Si no hay cambio pasamos a void de nuevo
-	BREQ	void_loop
-	CALL	DELAY			// si hay cambio nos saltamos a BREQ y hacemos el delay
-	IN		R21, PINB
-	CP		R23, R21
-	BREQ	void_loop		// hacemos lo mismo 2 veces si si hubo un cambio
-	CALL	DELAY
-	CALL	BOTONES
-	CALL	DISPLAY_UPDATE
+	BRNE	esperar_100ms		// Repite hasta completar 1
+	INC		R17				// Incrementa el contador
+	ANDI	R17, 0x0F		// Mantiene el valor dentro de 4 bits (0-15)
+	IN		R16, PORTC
+	ANDI	R16, 0xF0
+	OR		R16, R17
+	OUT		PORTC, R16
+	call	BOTONES
+	CALL	COMPARADOR 
+Salto:
 	RJMP	void_loop
 
 BOTONES:
@@ -129,21 +118,22 @@ aumento:
 	BREQ	RESET			//reseteamos el contador
 	INC		R20
 	RET
+
 decremento: 
 	CPI		R20, 0x00		// Comparamos si es igual a 0 si restamos tenemos overflow
 	BREQ	MAXEO
 	DEC		R20
-	RET	
+	RET
 
 RESET:	
 	LDI		R20, 0x00
-	RJMP	void_loop
+	RET
 
 MAXEO:					//REiniciamos a su valor maximo 
 	LDI		R20, 0x0F
-	RJMP	void_loop
+	RET
 
-DISPLAY_UPDATE:0
+DISPLAY_UPDATE:
     LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
     LDI		ZL, LOW(TABLE<<1)    
     ADD		ZL, R20				 // R20 es nuestro contador
@@ -151,7 +141,28 @@ DISPLAY_UPDATE:0
     LPM		R16, Z               // Carga el byte Z en r16
     OUT		PORTD, R16			 // display del valor deseado
 	CALL	DELAY 
-    RJMP	void_loop
+    RET
+
+COMPARADOR:
+	CP		R17, R20		//Comparamos los registros de los contadores 
+	BRNE	Salto			//Si no son iguales nos regresamos a lo que estabamos 
+	SBIC    PINC, 5                 ; Saltar si el pin C5 está apagado
+    CBI     PORTC, 5                ; Apagar el pin C5 si está encendido
+    SBIS    PINC, 5                 ; Saltar si el pin C5 está encendido
+    SBI     PORTC, 5                ; Encender el pin C5 si está apagado
+	LDI		R26, 250		// Hacemos un loop de delays para que sea perceptible el encendido
+Delay_loop:			// para que la led este encendida mas tiempo
+	CALL	DELAY
+	DEC		R26
+	BRNE	Delay_loop
+
+	LDI		R17, 0x00
+	IN		R16, PORTC
+	ANDI	R16, 0xF0
+	OR		R16, R17
+	OUT		PORTC, R16
+	RET	
+
 
 DELAY:
 	LDI		R25, 0xFF
@@ -191,4 +202,4 @@ SUB_DELAY6:
 
 ;*************** TABLA DE BÚSQUEDA ***************
 TABLE:
-    .DB 0x40, 0x79, 0x24, 0x30, 0x19, 0x12, 0x02, 0x38, 0x00, 0x10, 0x08, 0x03, 0x46, 0x21, 0x06, 0x0E  
+    .DB 0x40, 0x79, 0x24, 0x30, 0x19, 0x12, 0x02, 0x78, 0x00, 0x10, 0x08, 0x03, 0x46, 0x21, 0x06, 0x0E  
