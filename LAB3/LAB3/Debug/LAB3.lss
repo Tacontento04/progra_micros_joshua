@@ -1,10 +1,10 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB2\LAB2\main.asm Fri Feb 21 03:55:44 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB3\LAB3\main.asm Fri Feb 21 17:05:51 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB2\LAB2\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
+C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB3\LAB3\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB2\LAB2\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
+C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB3\LAB3\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
                                  
                                  ;**********************************************************
                                  
@@ -992,11 +992,11 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  ;Test.asm
                                  ;
                                  ;Autor: Joshua Vásquez
-                                 ;Proyecto: LAB 2
+                                 ;Proyecto: LAB3
                                  ;Hardware: ATMega328P
-                                 ;Creado: 2/13/2025
+                                 ;Creado: 21/02/2025
                                  ;Modificado :
-                                 ;Descripcion: Contador binario de 4 bits cada 100ms
+                                 ;Descripcion: Este programa consiste en un contador binario de 4 bits interrupciones
                                  
                                  ;**************************************
                                  ;ENCABEZADO
@@ -1046,200 +1046,169 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  
                                  ; ***** END OF FILE ******************************************************
                                  .CSEG
-                                 .ORG 0x0000	
-000000 c004                      rjmp setup
-                                 
+                                 .ORG	0x0000	
+000000 940c 0022                 	JMP START
+                                 .ORG	PCI0addr
+000006 940c 004c                 	JMP	INT_BOTONAZO
+                                 .ORG	OVF0addr
+000020 940c 005f                 	JMP	timer0_overflow
                                  ;***************************************
                                  ; STACK POINTER
                                  ;****************************************
-000001 ef0f                      LDI R16, LOW(RAMEND) 
-000002 bf0d                      OUT SPL, R16 
-000003 e008                      LDI R16, HIGH(RAMEND)
-000004 bf0e                      OUT SPH, R16
+                                 START:
+000022 ef0f                      LDI R16, LOW(RAMEND) 
+000023 bf0d                      OUT SPL, R16 
+000024 e008                      LDI R16, HIGH(RAMEND)
+000025 bf0e                      OUT SPH, R16
                                  
                                  ;***********************************************
                                  ;CONFIGURACION 
                                  ;***********************************************
                                  SETUP:
-                                 	//CONFIGURAMOS EL PRESCALER PRINCIPAL
-000005 e800                      	LDI		R16, (1 << CLKPCE)		// Habilitar cambio de prescaler
-000006 9300 0061                 	STS		CLKPR, R16
-000008 e004                      	LDI		R16, (1 << CLKPS2)
-000009 9300 0061                 	STS		CLKPR, R16				// CONFIGURAMOS PRESCALER A 16 F_CPU = 1Mhz
+000026 94f8                      CLI		// inabilitamos interrupciones
+                                 //			TIMER 0
+                                 //CONFIGURAMOS EL PRESCALER PRINCIPAL
+000027 e800                      	LDI		R16, (1 << CLKPCE)		// Habilitar cambio de prescaler
+000028 9300 0061                 	STS		CLKPR, R16
+00002a e004                      	LDI		R16, (1 << CLKPS2)
+00002b 9300 0061                 	STS		CLKPR, R16				// CONFIGURAMOS PRESCALER A 16 F_CPU = 1Mhz
+                                 // CONFIGURACMOS EL TIMER0
+00002d e000                      	LDI		R16, 0x00
+00002e bd04                      	OUT		TCCR0A, R16			// TCCR0A es el registro de control de TIMER0
+                                 // con 0x00 activamos el modo normal del timer0 
+00002f e003                      	LDI		R16, (1 << CS01) | (1 << CS00)	// PRESCALER DE 64
+000030 bd05                      	OUT		TCCR0B, R16	
+                                 //ACTIVAMOS INTERRUMCION DE OVERFLOW
+000031 e001                      	LDI R16, (1 << TOIE0)
+000032 9300 006e                     STS TIMSK0, R16 
                                  
                                  	//CONFIGURAMOS EL PUERTO C
-00000b ef0f                      	LDI		R16, 0xFF		 //Configuramos el purto C como salida
-00000c b907                      	OUT		DDRC, R16
+000034 ef0f                      	LDI		R16, 0xFF		 //Configuramos el purto C como salida
+000035 b907                      	OUT		DDRC, R16
                                  
                                  	//CONFIGURAMOS EL PUERTO D
-00000d ef0f                      	LDI		R16, 0xFF		 //Configuramos el purto D como salida
-00000e b90a                      	OUT		DDRD, R16
+000036 ef0f                      	LDI		R16, 0xFF		 //Configuramos el purto D como salida
+000037 b90a                      	OUT		DDRD, R16
                                  
                                  	//CONFIGURAMOS PUERTO B
-00000f e000                      	LDI		R16, 0x00		// Configuramos el puerto B como entrada 
-000010 b904                      	OUT		DDRB, R16
-000011 ef0f                      	LDI		R16, 0xFF		//Activamos pull up
-000012 b905                      	OUT		PORTB, R16
+000038 e000                      	LDI		R16, 0x00		// Configuramos el puerto B como entrada 
+000039 b904                      	OUT		DDRB, R16
+00003a ef0f                      	LDI		R16, 0xFF		//Activamos pull up
+00003b b905                      	OUT		PORTB, R16
                                  
+                                 // CONFIGURACION DE INTERRUPCIONES 
+00003c e003                      	LDI		R16, (1 << PCINT1) | (1 << PCINT0) 
+00003d 9300 006b                 	STS		PCMSK0, R16
+00003f e001                      	LDI		R16, (1 << PCIE0)
+000040 9300 0068                 	STS		PCICR, R16
                                  
-                                 	// CONFIGURACMOS EL TIMER0
-000013 e000                      	LDI		R16, 0x00
-000014 bd04                      	OUT		TCCR0A, R16			// TCCR0A es el registro de control de TIMER0
-                                 	// con 0x00 activamos el modo normal del timer0 
-000015 e003                      	LDI		R16, (1 << CS01) | (1 << CS00)	// PRESCALER DE 64
-000016 bd05                      	OUT		TCCR0B, R16	
-                                 	
-                                 	// Configuracion para apagar los demas leds del arduino 
-000017 e000                          ldi r16, 0x00
-000018 9300 00c1                     sts UCSR0B, r16
+                                 // Configuracion para apagar los demas leds del arduino 
+000042 e000                          ldi r16, 0x00
+000043 9300 00c1                     sts UCSR0B, r16
                                  
-                                 	// R17 contador de 4 bits 
-00001a e010                      	LDI		R17, 0x00
+                                 // R20 contador de 4 bits 
+000045 e040                      	LDI		R20, 0x00
                                  
-                                 	//R21	Contador del display 
-00001b e040                      	LDI		R20, 0x00
+                                 //	R18 CONTADOR DEL DISPLAY
+000046 e020                      	LDI		R18, 0x00
                                  
-                                 	// Estado botones inicialmente encendidos 
-00001c ef7f                      	LDI		R23, 0xFF
+                                 // Estado botones inicialmente encendidos 
+000047 ef7f                      	LDI		R23, 0xFF
                                  
-                                 	//Encendemos el pin4 de c como el display es anodo comun 
-00001d 9a44                      	sbi PORTC, 4            ; Encender el pin C4
-                                 
+000048 9478                      	SEI
                                  
                                  void_loop:
-00001e e000                      	LDI		R16, 0x00
-00001f bd06                      	OUT		TCNT0, R16		// Reiniciamos el contador 
-000020 e02a                      	LDI		R18, 10			// 10 ciclos de ~100ms (1s)
-000021 940e 004d                 	CALL	DISPLAY_UPDATE 
-                                 esperar_100ms:
-000023 e036                      	LDI		R19, 6			// Esperar 6 desbordes de ~16.38ms
+000049 940e 007d                 	CALL	DISPLAY_UPDATE
+00004b cffd                      	RJMP	void_loop
                                  
-                                 esperar_overflow:
-000024 b305                      	IN		R16, TIFR0		// Leer la bandera de interrupción del Timer0
-000025 ff00                      	SBRS	R16, TOV0		// Si no está en 1, sigue esperando
-000026 cffd                      	RJMP	esperar_overflow
-000027 e001                      	LDI		R16, (1 << TOV0)
-000028 bb05                      	OUT		TIFR0, R16		// Borra la bandera de desbordamiento
-000029 953a                      	DEC		R19
-00002a f7c9                      	BRNE	esperar_overflow	// Espera hasta completar 6 desbordes (~100ms)
-00002b 952a                      	DEC		R18
-00002c f7b1                      	BRNE	esperar_100ms		// Repite hasta completar 1
-00002d 9513                      	INC		R17				// Incrementa el contador
-00002e 701f                      	ANDI	R17, 0x0F		// Mantiene el valor dentro de 4 bits (0-15)
-00002f b108                      	IN		R16, PORTC
-000030 7f00                      	ANDI	R16, 0xF0
-000031 2b01                      	OR		R16, R17
-000032 b908                      	OUT		PORTC, R16
-000033 940e 0038                 	call	BOTONES
-000035 940e 0056                 	CALL	COMPARADOR 
-                                 Salto:
-000037 cfe6                      	RJMP	void_loop
+                                 // Interrupt routines 
+                                 INT_BOTONAZO:
+00004c 930f                      	PUSH	R16
+00004d b70f                      	IN		R16, SREG
+00004e 930f                      	PUSH	R16
+                                 	
+00004f b153                      	IN		R21, PINB
+000050 2f65                      	MOV		R22, R21		//Guardamos el estado actual 
+000051 ff60                      	SBRS	R22, 0
+000052 940e 006f                 	CALL	aumento 
+000054 ff61                      	SBRS	R22, 1
+000055 940e 0073                 	CALL	decremento
+000057 b948                      	OUT		PORTC, R20
+000058 e001                      	LDI		R16, (1 << PCIF0)   ; Limpiar la bandera de interrupción de Pin Change
+000059 9300 001b                 	STS		PCIFR, R16
                                  
-                                 BOTONES:
-000038 b153                      	IN		R21, PINB
-000039 2f65                      	MOV		R22, R21		//Guardamos el estado actual 
-00003a ff60                      	SBRS	R22, 0
-00003b 940e 0041                 	CALL	aumento 
-00003d ff61                      	SBRS	R22, 1
-00003e 940e 0045                 	CALL	decremento
-000040 9508                      	RET
                                  
-                                 aumento:
-000041 304f                      	CPI		R20, 0x0F		// Comparamaos si es igual a 0x0F si no saltamos
-000042 f031                      	BREQ	RESET			//reseteamos el contador
-000043 9543                      	INC		R20
-000044 9508                      	RET
+00005b 910f                      	POP		R16
+00005c bf0f                      	OUT		SREG, R16
+00005d 910f                      	POP		R16
+00005e 9518                      	RETI
+                                 
+                                 timer0_overflow:
+00005f 930f                      	PUSH	R16
+000060 b70f                          IN		R16, SREG
+000061 930f                          PUSH	R16
+                                 
+000062 94f8                      	CLI
+000063 9513                          INC		R17         // Incrementamos el contador de interrupciones
+000064 9478                      	SEI
+000065 302a                      	CPI		R18, 0x0A
+000066 f091                      	BREQ	reset_display
+000067 331d                          CPI		R17, 61     // 61 interumpiones 
+000068 f411                          BRNE	END_ISR    // Si no, salir de la interrupción
+                                 
+000069 e010                          LDI		R17, 0x00   // Reiniciar el contador de interrupciones
+00006a 9523                          INC		R18         // Incrementar el contador de segundos
+                                 
+                                 END_ISR:
+00006b 910f                          POP		R16
+00006c bf0f                          OUT		SREG, R16
+00006d 910f                          POP		R16
+00006e 9518                          RETI
+                                 
+                                 // SUBRUTINAS SIN INTERUPCIONES 
+                                 aumento: 
+00006f 304f                      	CPI		R20, 0x0F		// Comparamaos si es igual a 0x0F si no saltamos
+000070 f031                      	BREQ	RESET			//reseteamos el contador
+000071 9543                      	INC		R20
+000072 9508                      	RET
                                  
                                  decremento: 
-000045 3040                      	CPI		R20, 0x00		// Comparamos si es igual a 0 si restamos tenemos overflow
-000046 f021                      	BREQ	MAXEO
-000047 954a                      	DEC		R20
-000048 9508                      	RET
+000073 3040                      	CPI		R20, 0x00		// Comparamos si es igual a 0 si restamos tenemos overflow
+000074 f031                      	BREQ	MAXEO
+000075 954a                      	DEC		R20
+000076 9508                      	RET
                                  
                                  RESET:	
-000049 e040                      	LDI		R20, 0x00
-00004a 9508                      	RET
+000077 e040                      	LDI		R20, 0x00
+000078 9508                      	RET
+                                 
+                                 reset_display:
+000079 e020                      	LDI		R18, 0x00
+00007a 9508                      	RET	
                                  
                                  MAXEO:					//REiniciamos a su valor maximo 
-00004b e04f                      	LDI		R20, 0x0F
-00004c 9508                      	RET
+00007b e04f                      	LDI		R20, 0x0F
+00007c 9508                      	RET
                                  
                                  DISPLAY_UPDATE:
-00004d e0f1                          LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
-00004e e0e0                          LDI		ZL, LOW(TABLE<<1)    
-00004f 0fe4                          ADD		ZL, R20				 // R20 es nuestro contador
-000050 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
-000051 9104                          LPM		R16, Z               // Carga el byte Z en r16
-000052 b90b                          OUT		PORTD, R16			 // display del valor deseado
-000053 940e 0067                 	CALL	DELAY 
-000055 9508                          RET
-                                 
-                                 COMPARADOR:
-000056 1714                      	CP		R17, R20		//Comparamos los registros de los contadores 
-000057 f6f9                      	BRNE	Salto			//Si no son iguales nos regresamos a lo que estabamos 
-000058 9935                      	SBIC    PINC, 5                 ; Saltar si el pin C5 está apagado
-000059 9845                          CBI     PORTC, 5                ; Apagar el pin C5 si está encendido
-00005a 9b35                          SBIS    PINC, 5                 ; Saltar si el pin C5 está encendido
-00005b 9a45                          SBI     PORTC, 5                ; Encender el pin C5 si está apagado
-00005c efaa                      	LDI		R26, 250		// Hacemos un loop de delays para que sea perceptible el encendido
-                                 Delay_loop:			// para que la led este encendida mas tiempo
-00005d 940e 0067                 	CALL	DELAY
-00005f 95aa                      	DEC		R26
-000060 f7e1                      	BRNE	Delay_loop
-                                 
-000061 e010                      	LDI		R17, 0x00
-000062 b108                      	IN		R16, PORTC
-000063 7f00                      	ANDI	R16, 0xF0
-000064 2b01                      	OR		R16, R17
-000065 b908                      	OUT		PORTC, R16
-000066 9508                      	RET	
-                                 
-                                 
-                                 DELAY:
-000067 ef9f                      	LDI		R25, 0xFF
-                                 SUB_DELAY1:
-000068 959a                      	DEC		R25
-000069 3090                      	CPI		R25, 0
-00006a f7e9                      	BRNE	SUB_DELAY1
-00006b ef9f                      	LDI		R25, 0xFF
-                                 SUB_DELAY2:
-00006c 959a                      	DEC		R25
-00006d 3090                      	CPI		R25, 0
-00006e f7e9                      	BRNE	SUB_DELAY2
-00006f ef9f                      	LDI		R25, 0xFF
-                                 SUB_DELAY3:
-000070 959a                      	DEC		R25
-000071 3090                      	CPI		R25, 0
-000072 f7e9                      	BRNE	SUB_DELAY3
-000073 9508                      	RET
-                                 SUB_DELAY4:
-000074 959a                      	DEC		R25
-000075 3090                      	CPI		R25, 0
-000076 f7e9                      	BRNE	SUB_DELAY4
-000077 9508                      	RET
-                                 SUB_DELAY5:
-000078 959a                      	DEC		R25
-000079 3090                      	CPI		R25, 0
-00007a f7e9                      	BRNE	SUB_DELAY5
-00007b 9508                      	RET
-                                 SUB_DELAY6:
-00007c 959a                      	DEC		R25
-00007d 3090                      	CPI		R25, 0
-00007e f7e9                      	BRNE	SUB_DELAY6
-00007f 9508                      	RET
-                                 
-                                 
+00007d e0f1                          LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+00007e e0e8                          LDI		ZL, LOW(TABLE<<1)    
+00007f 0fe2                          ADD		ZL, R18				 // R20 es nuestro contador
+000080 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+000081 9104                          LPM		R16, Z               // Carga el byte Z en r16
+000082 b90b                          OUT		PORTD, R16			 // display del valor deseado
+000083 9508                          RET
                                  	
                                  
                                  ;*************** TABLA DE BÚSQUEDA ***************
                                  TABLE:
-000080 7940
-000081 3024
-000082 1219
-000083 7802
-000084 1000
-000085 0308
-000086 2146
+000084 7940
+000085 3024
+000086 1219
+000087 7802
+000088 1000
+000089 0308
+00008a 2146
 
 
 RESOURCE USE INFORMATION
@@ -1259,37 +1228,37 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   1 r0 :   0 r1 :   1 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  38 r17:   7 r18:   2 r19:   2 r20:   9 
-r21:   2 r22:   3 r23:   1 r24:   0 r25:  15 r26:   2 r27:   0 r28:   0 
+r13:   0 r14:   0 r15:   0 r16:  44 r17:   3 r18:   5 r19:   0 r20:   8 
+r21:   2 r22:   3 r23:   1 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   2 r31:   2 
-Registers used: 14 out of 35 (40.0%)
+Registers used: 11 out of 35 (31.4%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   1 add   :   1 adiw  :   0 and   :   0 
-andi  :   3 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   2 brge  :   0 brhc  :   0 
+andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :   3 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :  10 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   7 cbi   :   1 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
-clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   1 cpc   :   0 
-cpi   :   8 cpse  :   0 dec   :  10 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   4 inc   :   2 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :  27 lds   :   0 lpm   :   2 lsl   :   0 
+brne  :   1 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   3 cbi   :   0 cbr   :   0 
+clc   :   0 clh   :   0 cli   :   2 cln   :   0 clr   :   0 cls   :   0 
+clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
+cpi   :   4 cpse  :   0 dec   :   1 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   3 inc   :   3 jmp   :   3 
+ld    :   0 ldd   :   0 ldi   :  24 lds   :   0 lpm   :   2 lsl   :   0 
 lsr   :   0 mov   :   1 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   2 ori   :   0 out   :  13 pop   :   0 
-push  :   0 rcall :   0 ret   :  11 reti  :   0 rjmp  :   3 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   1 sbis  :   1 
-sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   3 sec   :   0 seh   :   0 
-sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   3 
+neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  12 pop   :   4 
+push  :   4 rcall :   0 ret   :   6 reti  :   2 rjmp  :   1 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
+sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   2 sec   :   0 seh   :   0 
+sei   :   2 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
+sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   7 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 24 out of 113 (21.2%)
+Instructions used: 23 out of 113 (20.4%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000110    256     16    272   32768   0.8%
+[.cseg] 0x000000 0x000118    208     16    224   32768   0.7%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

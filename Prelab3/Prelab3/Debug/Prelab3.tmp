@@ -27,9 +27,9 @@
   <INT_BOTONAZO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>86</LINE></INT_BOTONAZO>
   <SETUP><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>34</LINE></SETUP>
   <void_loop><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>81</LINE></void_loop>
-  <aumento><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>107</LINE></aumento>
-  <decremento><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>113</LINE></decremento>
-  <RESET><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>119</LINE></RESET>
-  <MAXEO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>123</LINE></MAXEO>
+  <aumento><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>108</LINE></aumento>
+  <decremento><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>114</LINE></decremento>
+  <RESET><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>120</LINE></RESET>
+  <MAXEO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Prelab3\Prelab3\main.asm</FILE><LINE>124</LINE></MAXEO>
  </LABELS>
 </ASSEMBLER_INFO>
