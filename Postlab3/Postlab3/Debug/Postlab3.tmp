@@ -1,0 +1,53 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.8</VERSION>
+ <DEVICE>"ATmega328P"</DEVICE>
+ <WORKING_DIR>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc</FILE>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\Debug\Postlab3.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>Postlab3.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>Postlab3.map</FILE>
+  <FILE>Postlab3.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <START><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>27</LINE></START>
+  <INT_BOTONAZO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>99</LINE></INT_BOTONAZO>
+  <timer0_overflow><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>120</LINE></timer0_overflow>
+  <SETUP><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>36</LINE></SETUP>
+  <void_loop><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>91</LINE></void_loop>
+  <displayA><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>154</LINE></displayA>
+  <DELAY><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>214</LINE></DELAY>
+  <displayB><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>159</LINE></displayB>
+  <aumento><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>170</LINE></aumento>
+  <decremento><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>176</LINE></decremento>
+  <SEGUIR1><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>134</LINE></SEGUIR1>
+  <reset_display><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>186</LINE></reset_display>
+  <SEGUIR2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>141</LINE></SEGUIR2>
+  <RESET_TOTAL><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>165</LINE></RESET_TOTAL>
+  <END_ISR><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>148</LINE></END_ISR>
+  <DISPLAY_UPDATEA><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>195</LINE></DISPLAY_UPDATEA>
+  <DISPLAY_UPDATEB><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>205</LINE></DISPLAY_UPDATEB>
+  <RESET><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>182</LINE></RESET>
+  <MAXEO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>191</LINE></MAXEO>
+  <TABLE><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>248</LINE></TABLE>
+  <SUB_DELAY1><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>216</LINE></SUB_DELAY1>
+  <SUB_DELAY2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>221</LINE></SUB_DELAY2>
+  <SUB_DELAY3><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>226</LINE></SUB_DELAY3>
+  <SUB_DELAY4><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>231</LINE></SUB_DELAY4>
+  <SUB_DELAY5><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>236</LINE></SUB_DELAY5>
+  <SUB_DELAY6><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm</FILE><LINE>241</LINE></SUB_DELAY6>
+ </LABELS>
+</ASSEMBLER_INFO>

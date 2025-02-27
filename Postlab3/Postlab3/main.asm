@@ -84,15 +84,20 @@ CLI		// inabilitamos interrupciones
 // Estado botones inicialmente encendidos 
 	LDI		R23, 0xFF
 
+// R19 contador para el display B
+	LDI		R19, 0x00
 	SEI
 
 void_loop:
-	CALL	DISPLAY_UPDATE
+	CALL	displayA		//display de segundos 
+	CALL	DELAY 
+	CALL	displayB		//display de decenas de segundos
+	CALL	DELAY 
 	RJMP	void_loop
 
 // Interrupt routines 
 INT_BOTONAZO:
-	PUSH	R16
+	PUSH	R16				//guardasmos la bandera SREG antes de las interrupciones
 	IN		R16, SREG
 	PUSH	R16
 	
@@ -108,7 +113,7 @@ INT_BOTONAZO:
 
 
 	POP		R16
-	OUT		SREG, R16
+	OUT		SREG, R16		//Sacamos el estado donde estabamos
 	POP		R16
 	RETI
 
@@ -117,12 +122,24 @@ timer0_overflow:
     IN		R16, SREG
     PUSH	R16
 
-	CLI
+
     INC		R17         // Incrementamos el contador de interrupciones
-	SEI
-	CPI		R18, 0x0A
-	BREQ	reset_display
-    CPI		R17, 61     // 61 interumpiones, contamos cada 16.3ms * 61 =994.3ms
+	//CPI		R18, 0x0A
+	//BREQ	reset_display
+	LDI		R27, 0x0A
+	CPSE	R18, R27	//Si son iguales salta 
+	RJMP	SEGUIR1
+	CALL	reset_display 
+
+SEGUIR1:
+	//CPI		R19, 0x06
+	//BREQ	RESET_TOTAL
+	LDI		R27, 0x06
+    CPSE	R19, R27		//Si son iguales salta
+	RJMP	SEGUIR2
+	CALL	RESET_TOTAL
+SEGUIR2:
+	CPI		R17, 61     // 61 interumpiones, contamos cada 16.3ms * 61 =994.3ms
     BRNE	END_ISR    // Si no, salir de la interrupción
 
     LDI		R17, 0x00   // Reiniciar el contador de interrupciones
@@ -152,6 +169,7 @@ RESET:
 	RET
 
 reset_display:
+	INC		R19
 	LDI		R18, 0x00
 	RET	
 
@@ -159,7 +177,23 @@ MAXEO:					//REiniciamos a su valor maximo
 	LDI		R20, 0x0F
 	RET
 
-DISPLAY_UPDATE:
+displayA:
+	CBI		PORTC,	5			//apagamos el pin 5
+	SBI		PORTC,	4			//encendemos el pin 4
+	CALL	DISPLAY_UPDATEA		// mostramos los segundos
+	RET
+displayB:
+	CBI		PORTC,	4			// apagamos el bit 4
+	SBI		PORTC,	5			//encendemos el bit 5
+	CALL	DISPLAY_UPDATEB		//mostramos las decenas de segundos
+	RET
+	
+RESET_TOTAL:
+	LDI		R19, 0x00
+	LDI		R18, 0x00
+	RET
+
+DISPLAY_UPDATEA:
     LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
     LDI		ZL, LOW(TABLE<<1)    
     ADD		ZL, R18				 // R20 es nuestro contador
@@ -168,6 +202,48 @@ DISPLAY_UPDATE:
     OUT		PORTD, R16			 // display del valor deseado
     RET
 	
+
+DISPLAY_UPDATEB:
+    LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+    LDI		ZL, LOW(TABLE<<1)    
+    ADD		ZL, R19				 // R20 es nuestro contador
+    ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+    LPM		R26, Z               // Carga el byte Z en r16
+    OUT		PORTD, R26			 // display del valor deseado
+    RET
+	
+DELAY:
+	LDI		R25, 0xFF
+SUB_DELAY1:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY1
+	LDI		R25, 0xFF
+SUB_DELAY2:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY2
+	LDI		R25, 0xFF
+SUB_DELAY3:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY3
+	RET
+SUB_DELAY4:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY4
+	RET
+SUB_DELAY5:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY5
+	RET
+SUB_DELAY6:
+	DEC		R25
+	CPI		R25, 0
+	BRNE	SUB_DELAY6
+	RET
 
 ;*************** TABLA DE BÚSQUEDA ***************
 TABLE:

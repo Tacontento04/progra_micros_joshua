@@ -1,10 +1,10 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB3\LAB3\main.asm Mon Feb 24 00:16:47 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm Thu Feb 27 01:12:31 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB3\LAB3\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
+C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\LAB3\LAB3\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
+C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Postlab3\Postlab3\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
                                  
                                  ;**********************************************************
                                  
@@ -1049,9 +1049,9 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  .ORG	0x0000	
 000000 940c 0022                 	JMP START
                                  .ORG	PCI0addr
-000006 940c 004c                 	JMP	INT_BOTONAZO
+000006 940c 0053                 	JMP	INT_BOTONAZO
                                  .ORG	OVF0addr
-000020 940c 005f                 	JMP	timer0_overflow
+000020 940c 0066                 	JMP	timer0_overflow
                                  ;***************************************
                                  ; STACK POINTER
                                  ;****************************************
@@ -1115,100 +1115,175 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  // Estado botones inicialmente encendidos 
 000047 ef7f                      	LDI		R23, 0xFF
                                  
-000048 9478                      	SEI
+                                 // R19 contador para el display B
+000048 e030                      	LDI		R19, 0x00
+000049 9478                      	SEI
                                  
                                  void_loop:
-000049 940e 007d                 	CALL	DISPLAY_UPDATE
-00004b cffd                      	RJMP	void_loop
+00004a 940e 007c                 	CALL	displayA
+00004c 940e 00a6                 	CALL	DELAY 
+00004e 940e 0081                 	CALL	displayB
+000050 940e 00a6                 	CALL	DELAY 
+000052 cff7                      	RJMP	void_loop
                                  
                                  // Interrupt routines 
                                  INT_BOTONAZO:
-00004c 930f                      	PUSH	R16
-00004d b70f                      	IN		R16, SREG
-00004e 930f                      	PUSH	R16
+000053 930f                      	PUSH	R16
+000054 b70f                      	IN		R16, SREG
+000055 930f                      	PUSH	R16
                                  	
-00004f b153                      	IN		R21, PINB
-000050 2f65                      	MOV		R22, R21		//Guardamos el estado actual 
-000051 ff60                      	SBRS	R22, 0
-000052 940e 006f                 	CALL	aumento 
-000054 ff61                      	SBRS	R22, 1
-000055 940e 0073                 	CALL	decremento
-000057 b948                      	OUT		PORTC, R20
-000058 e001                      	LDI		R16, (1 << PCIF0)   //Limpiar la bandera de interrupción de Pin Change
-000059 9300 001b                 	STS		PCIFR, R16
+000056 b153                      	IN		R21, PINB
+000057 2f65                      	MOV		R22, R21		//Guardamos el estado actual 
+000058 ff60                      	SBRS	R22, 0
+000059 940e 0089                 	CALL	aumento 
+00005b ff61                      	SBRS	R22, 1
+00005c 940e 008d                 	CALL	decremento
+00005e b948                      	OUT		PORTC, R20
+00005f e001                      	LDI		R16, (1 << PCIF0)   //Limpiar la bandera de interrupción de Pin Change
+000060 9300 001b                 	STS		PCIFR, R16
                                  
                                  
-00005b 910f                      	POP		R16
-00005c bf0f                      	OUT		SREG, R16
-00005d 910f                      	POP		R16
-00005e 9518                      	RETI
+000062 910f                      	POP		R16
+000063 bf0f                      	OUT		SREG, R16
+000064 910f                      	POP		R16
+000065 9518                      	RETI
                                  
                                  timer0_overflow:
-00005f 930f                      	PUSH	R16
-000060 b70f                          IN		R16, SREG
-000061 930f                          PUSH	R16
+000066 930f                      	PUSH	R16
+000067 b70f                          IN		R16, SREG
+000068 930f                          PUSH	R16
                                  
-000062 94f8                      	CLI
-000063 9513                          INC		R17         // Incrementamos el contador de interrupciones
-000064 9478                      	SEI
-000065 302a                      	CPI		R18, 0x0A
-000066 f091                      	BREQ	reset_display
-000067 331d                          CPI		R17, 61     // 61 interumpiones, contamos cada 16.3ms * 61 =994.3ms
-000068 f411                          BRNE	END_ISR    // Si no, salir de la interrupción
                                  
-000069 e010                          LDI		R17, 0x00   // Reiniciar el contador de interrupciones
-00006a 9523                          INC		R18         // Incrementar el contador de segundos
+000069 9513                          INC		R17         // Incrementamos el contador de interrupciones
+                                 	//CPI		R18, 0x0A
+                                 	//BREQ	reset_display
+00006a e0ba                      	LDI		R27, 0x0A
+00006b 132b                      	CPSE	R18, R27
+00006c c002                      	RJMP	SEGUIR1
+00006d 940e 0093                 	CALL	reset_display 
+                                 
+                                 SEGUIR1:
+                                 	//CPI		R19, 0x06
+                                 	//BREQ	RESET_TOTAL
+00006f e0b6                      	LDI		R27, 0x06
+000070 133b                          CPSE	R19, R27
+000071 c002                      	RJMP	SEGUIR2
+000072 940e 0086                 	CALL	RESET_TOTAL
+                                 SEGUIR2:
+000074 331d                      	CPI		R17, 61     // 61 interumpiones, contamos cada 16.3ms * 61 =994.3ms
+000075 f411                          BRNE	END_ISR    // Si no, salir de la interrupción
+                                 
+000076 e010                          LDI		R17, 0x00   // Reiniciar el contador de interrupciones
+000077 9523                          INC		R18         // Incrementar el contador de segundos
                                  
                                  END_ISR:
-00006b 910f                          POP		R16
-00006c bf0f                          OUT		SREG, R16
-00006d 910f                          POP		R16
-00006e 9518                          RETI
+000078 910f                          POP		R16
+000079 bf0f                          OUT		SREG, R16
+00007a 910f                          POP		R16
+00007b 9518                          RETI
                                  
+                                 displayA:
+00007c 9845                      	CBI		PORTC,	5			//apagamos el pin 1
+00007d 9a44                      	SBI		PORTC,	4			//encendemos el pin0
+00007e 940e 0098                 	CALL	DISPLAY_UPDATEA
+000080 9508                      	RET
+                                 displayB:
+000081 9844                      	CBI		PORTC,	4
+000082 9a45                      	SBI		PORTC,	5
+000083 940e 009f                 	CALL	DISPLAY_UPDATEB
+000085 9508                      	RET
+                                 	
+                                 RESET_TOTAL:
+000086 e030                      	LDI		R19, 0x00
+000087 e020                      	LDI		R18, 0x00
+000088 9508                      	RET
                                  // SUBRUTINAS SIN INTERUPCIONES 
                                  aumento: 
-00006f 304f                      	CPI		R20, 0x0F		// Comparamaos si es igual a 0x0F si no saltamos
-000070 f031                      	BREQ	RESET			//reseteamos el contador
-000071 9543                      	INC		R20
-000072 9508                      	RET
+000089 304f                      	CPI		R20, 0x0F		// Comparamaos si es igual a 0x0F si no saltamos
+00008a f031                      	BREQ	RESET			//reseteamos el contador
+00008b 9543                      	INC		R20
+00008c 9508                      	RET
                                  
                                  decremento: 
-000073 3040                      	CPI		R20, 0x00		// Comparamos si es igual a 0 si restamos tenemos overflow
-000074 f031                      	BREQ	MAXEO
-000075 954a                      	DEC		R20
-000076 9508                      	RET
+00008d 3040                      	CPI		R20, 0x00		// Comparamos si es igual a 0 si restamos tenemos overflow
+00008e f039                      	BREQ	MAXEO
+00008f 954a                      	DEC		R20
+000090 9508                      	RET
                                  
                                  RESET:	
-000077 e040                      	LDI		R20, 0x00
-000078 9508                      	RET
+000091 e040                      	LDI		R20, 0x00
+000092 9508                      	RET
                                  
                                  reset_display:
-000079 e020                      	LDI		R18, 0x00
-00007a 9508                      	RET	
+000093 9533                      	INC		R19
+000094 e020                      	LDI		R18, 0x00
+000095 9508                      	RET	
                                  
                                  MAXEO:					//REiniciamos a su valor maximo 
-00007b e04f                      	LDI		R20, 0x0F
-00007c 9508                      	RET
+000096 e04f                      	LDI		R20, 0x0F
+000097 9508                      	RET
                                  
-                                 DISPLAY_UPDATE:
-00007d e0f1                          LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
-00007e e0e8                          LDI		ZL, LOW(TABLE<<1)    
-00007f 0fe2                          ADD		ZL, R18				 // R20 es nuestro contador
-000080 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
-000081 9104                          LPM		R16, Z               // Carga el byte Z en r16
-000082 b90b                          OUT		PORTD, R16			 // display del valor deseado
-000083 9508                          RET
+                                 DISPLAY_UPDATEA:
+000098 e0f1                          LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+000099 e7ee                          LDI		ZL, LOW(TABLE<<1)    
+00009a 0fe2                          ADD		ZL, R18				 // R20 es nuestro contador
+00009b 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+00009c 9104                          LPM		R16, Z               // Carga el byte Z en r16
+00009d b90b                          OUT		PORTD, R16			 // display del valor deseado
+00009e 9508                          RET
                                  	
+                                 
+                                 DISPLAY_UPDATEB:
+00009f e0f1                          LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+0000a0 e7ee                          LDI		ZL, LOW(TABLE<<1)    
+0000a1 0fe3                          ADD		ZL, R19				 // R20 es nuestro contador
+0000a2 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+0000a3 91a4                          LPM		R26, Z               // Carga el byte Z en r16
+0000a4 b9ab                          OUT		PORTD, R26			 // display del valor deseado
+0000a5 9508                          RET
+                                 	
+                                 DELAY:
+0000a6 ef9f                      	LDI		R25, 0xFF
+                                 SUB_DELAY1:
+0000a7 959a                      	DEC		R25
+0000a8 3090                      	CPI		R25, 0
+0000a9 f7e9                      	BRNE	SUB_DELAY1
+0000aa ef9f                      	LDI		R25, 0xFF
+                                 SUB_DELAY2:
+0000ab 959a                      	DEC		R25
+0000ac 3090                      	CPI		R25, 0
+0000ad f7e9                      	BRNE	SUB_DELAY2
+0000ae ef9f                      	LDI		R25, 0xFF
+                                 SUB_DELAY3:
+0000af 959a                      	DEC		R25
+0000b0 3090                      	CPI		R25, 0
+0000b1 f7e9                      	BRNE	SUB_DELAY3
+0000b2 9508                      	RET
+                                 SUB_DELAY4:
+0000b3 959a                      	DEC		R25
+0000b4 3090                      	CPI		R25, 0
+0000b5 f7e9                      	BRNE	SUB_DELAY4
+0000b6 9508                      	RET
+                                 SUB_DELAY5:
+0000b7 959a                      	DEC		R25
+0000b8 3090                      	CPI		R25, 0
+0000b9 f7e9                      	BRNE	SUB_DELAY5
+0000ba 9508                      	RET
+                                 SUB_DELAY6:
+0000bb 959a                      	DEC		R25
+0000bc 3090                      	CPI		R25, 0
+0000bd f7e9                      	BRNE	SUB_DELAY6
+0000be 9508                      	RET
                                  
                                  ;*************** TABLA DE BÚSQUEDA ***************
                                  TABLE:
-000084 7940
-000085 3024
-000086 1219
-000087 7802
-000088 1000
-000089 0308
-00008a 2146
+0000bf 7940
+0000c0 3024
+0000c1 1219
+0000c2 7802
+0000c3 1000
+0000c4 0308
+0000c5 2146
 
 
 RESOURCE USE INFORMATION
@@ -1226,39 +1301,39 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :   0 z  :   1 r0 :   0 r1 :   1 r2 :   0 r3 :   0 r4 :   0 
+x  :   0 y  :   0 z  :   2 r0 :   0 r1 :   2 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  44 r17:   3 r18:   5 r19:   0 r20:   8 
-r21:   2 r22:   3 r23:   1 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
-r29:   0 r30:   2 r31:   2 
-Registers used: 11 out of 35 (31.4%)
+r13:   0 r14:   0 r15:   0 r16:  44 r17:   3 r18:   6 r19:   5 r20:   8 
+r21:   2 r22:   3 r23:   1 r24:   0 r25:  15 r26:   2 r27:   4 r28:   0 
+r29:   0 r30:   4 r31:   4 
+Registers used: 15 out of 35 (42.9%)
 
 "ATmega328P" instruction use summary:
-.lds  :   0 .sts  :   0 adc   :   1 add   :   1 adiw  :   0 and   :   0 
+.lds  :   0 .sts  :   0 adc   :   2 add   :   2 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   3 brge  :   0 brhc  :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :   2 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   1 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   3 cbi   :   0 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   2 cln   :   0 clr   :   0 cls   :   0 
+brne  :   7 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :  10 cbi   :   2 cbr   :   0 
+clc   :   0 clh   :   0 cli   :   1 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   4 cpse  :   0 dec   :   1 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   3 inc   :   3 jmp   :   3 
-ld    :   0 ldd   :   0 ldi   :  24 lds   :   0 lpm   :   2 lsl   :   0 
+cpi   :   9 cpse  :   2 dec   :   7 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   3 inc   :   4 jmp   :   3 
+ld    :   0 ldd   :   0 ldi   :  34 lds   :   0 lpm   :   4 lsl   :   0 
 lsr   :   0 mov   :   1 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  12 pop   :   4 
-push  :   4 rcall :   0 ret   :   6 reti  :   2 rjmp  :   1 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
+neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  13 pop   :   4 
+push  :   4 rcall :   0 ret   :  14 reti  :   2 rjmp  :   3 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   2 sec   :   0 seh   :   0 
-sei   :   2 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
+sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   7 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 23 out of 113 (20.4%)
+Instructions used: 26 out of 113 (23.0%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000118    208     16    224   32768   0.7%
+[.cseg] 0x000000 0x00018e    326     16    342   32768   1.0%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
