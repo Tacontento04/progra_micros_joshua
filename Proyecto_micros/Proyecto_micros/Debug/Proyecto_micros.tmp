@@ -23,41 +23,21 @@
   <FILE>Proyecto_micros.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <START><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>27</LINE></START>
-  <INT_BOTONAZO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>105</LINE></INT_BOTONAZO>
-  <timer0_overflow><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>126</LINE></timer0_overflow>
-  <SETUP><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>36</LINE></SETUP>
-  <void_loop><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>93</LINE></void_loop>
-  <displayA><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>210</LINE></displayA>
-  <DELAY><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>291</LINE></DELAY>
-  <displayB><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>217</LINE></displayB>
-  <displayC><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>225</LINE></displayC>
-  <displayD><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>233</LINE></displayD>
-  <aumento><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>171</LINE></aumento>
-  <decremento><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>177</LINE></decremento>
-  <SEGUIR1><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>140</LINE></SEGUIR1>
-  <reset_display1><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>196</LINE></reset_display1>
-  <SEGUIR2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>147</LINE></SEGUIR2>
-  <RESET_TOTAL><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>242</LINE></RESET_TOTAL>
-  <SEGUIR3><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>152</LINE></SEGUIR3>
-  <reset_display2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>201</LINE></reset_display2>
-  <SEGUIR4><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>157</LINE></SEGUIR4>
-  <RESET_TOTAL2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>249</LINE></RESET_TOTAL2>
-  <END_ISR><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>164</LINE></END_ISR>
-  <RESET><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>192</LINE></RESET>
-  <MAXEO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>206</LINE></MAXEO>
-  <SEGUIR5><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>185</LINE></SEGUIR5>
-  <decremento_DB><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>188</LINE></decremento_DB>
-  <DISPLAY_UPDATEA><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>254</LINE></DISPLAY_UPDATEA>
-  <DISPLAY_UPDATEB><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>264</LINE></DISPLAY_UPDATEB>
-  <DISPLAY_UPDATEC><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>273</LINE></DISPLAY_UPDATEC>
-  <DISPLAY_UPDATED><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>282</LINE></DISPLAY_UPDATED>
-  <TABLE><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>325</LINE></TABLE>
-  <SUB_DELAY1><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>293</LINE></SUB_DELAY1>
-  <SUB_DELAY2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>298</LINE></SUB_DELAY2>
-  <SUB_DELAY3><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>303</LINE></SUB_DELAY3>
-  <SUB_DELAY4><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>308</LINE></SUB_DELAY4>
-  <SUB_DELAY5><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>313</LINE></SUB_DELAY5>
-  <SUB_DELAY6><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>318</LINE></SUB_DELAY6>
+  <START><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>44</LINE></START>
+  <INT_BOTONAZO><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>294</LINE></INT_BOTONAZO>
+  <timer0_overflow><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>222</LINE></timer0_overflow>
+  <SETUP><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>53</LINE></SETUP>
+  <INIT_TMR0><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>155</LINE></INIT_TMR0>
+  <void_loop><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>122</LINE></void_loop>
+  <estado1><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>135</LINE></estado1>
+  <estado2><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>146</LINE></estado2>
+  <estado3><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>149</LINE></estado3>
+  <DISPLAY_UPDATEA><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>164</LINE></DISPLAY_UPDATEA>
+  <DISPLAY_UPDATEB><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>178</LINE></DISPLAY_UPDATEB>
+  <DISPLAY_UPDATEC><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>192</LINE></DISPLAY_UPDATEC>
+  <DISPLAY_UPDATED><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>206</LINE></DISPLAY_UPDATED>
+  <TABLE><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>304</LINE></TABLE>
+  <EXIT_TMR0_ISR><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>288</LINE></EXIT_TMR0_ISR>
+  <check_24><FILE>C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm</FILE><LINE>273</LINE></check_24>
  </LABELS>
 </ASSEMBLER_INFO>
