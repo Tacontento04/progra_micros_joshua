@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm Fri Mar 14 03:46:53 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm Fri Mar 21 05:26:07 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
@@ -1052,7 +1052,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  .equ	MAX_displayC	=	10
                                  .equ	MAX_displayD	=	3
                                  
-                                 
+                                 .def	MESES		=	R17
                                  .def	COUNTER		=	R19
                                  .def	COUNTER2	=	R25
                                  .def	COUNTER3	=	R18
@@ -1061,14 +1061,26 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  .def	displayB	=	R22
                                  .def	displayC	=	R23
                                  .def	displayD	=	R24
+                                 .def	alarmaA		=	R10
+                                 .def	alarmaB		=	R11
+                                 .def	alarmaC		=	R12
+                                 .def	alarmaD		=	R13
+                                 .def	fechaA		=	R5
+                                 .def	fechaB		=	R6
+                                 .def	fechaC		=	R7		//decena del mes
+                                 .def	fechaD		=	R8		//unidad del mes
+                                 
+                                 .DSEG	
+000100                           ESTADO_ANTERIORB1:	.BYTE 1
+000101                           ESTADO_ACTUALB1:	.BYTE 1
                                  
                                  .CSEG	
                                  .ORG	0x0000	
 000000 940c 0022                 	JMP START
-                                 .ORG	PCI2addr
-00000a 940c 00cd                 	JMP	INT_BOTONAZO
+                                 .ORG	PCI1addr
+000008 940c 032b                 	JMP	INT_BOTONAZOC
                                  .ORG	OVF0addr
-000020 940c 00a1                 	JMP	timer0_overflow
+000020 940c 02e6                 	JMP	timer0_overflow
                                  ;***************************************
                                  ; STACK POINTER
                                  ;****************************************
@@ -1100,246 +1112,1047 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 000031 e001                      	LDI R16, (1 << TOIE0)
 000032 9300 006e                     STS TIMSK0, R16 
                                  
-                                 	//CONFIGURAMOS EL PUERTO C
-000034 ef0f                      	LDI		R16, 0xFF		 //Configuramos el purto C como salida
+                                 	//CONFIGURAMOS EL PUERTO B
+000034 ef0f                      	LDI		R16, 0xFF		 //Configuramos el purto B como salida
 000035 b904                      	OUT		DDRB, R16
                                  
                                  	//CONFIGURAMOS EL PUERTO D
 000036 ef0f                      	LDI		R16, 0xFF		 //Configuramos el purto D como salida
 000037 b90a                      	OUT		DDRD, R16
                                  
-                                 	//CONFIGURAMOS PUERTO B
-000038 e000                      	LDI		R16, 0x00		// Configuramos el puerto B como entrada 
+                                 	//CONFIGURAMOS PUERTO C
+000038 ec07                      	LDI		R16, 0b11000111		// Configuramos el puerto C como entrada 
 000039 b907                      	OUT		DDRC, R16
-00003a ef0f                      	LDI		R16, 0xFF		//Activamos pull up
+00003a e308                      	LDI		R16, 0b00111000			//Activamos pull up
 00003b b908                      	OUT		PORTC, R16
                                  
                                  ;**********************************
                                  ;CONFIGURACION DE TIMER 
                                  ;**********************************
-00003c 940e 006a                 	CALL	INIT_TMR0
-                                 
+00003c 940e 0142                 	CALL	INIT_TMR0
+00003e 940e 0149                 	CALL	INIT_PORTC
                                  ;*********************************
                                  ;CONFIGURACION DE INTERRUPCIONES 
                                  ;**********************************
-00003e e003                      	LDI		R16, (1 << PCINT1) | (1 << PCINT0) 
-00003f 9300 006b                 	STS		PCMSK0, R16
-000041 e001                      	LDI		R16, (1 << PCIE0)
-000042 9300 0068                 	STS		PCICR, R16
-                                 	// enable TOEIE1 to generate an interrupt
-000044 e001                      	LDI		R16, (1 << TOIE0)
-000045 9300 006e                 	STS		TIMSK0, R16
-                                 
                                  
                                  // Configuracion para apagar los demas leds del arduino 
-000047 e000                          ldi r16, 0x00
-000048 9300 00c1                     sts UCSR0B, r16
+000040 e000                          ldi r16, 0x00
+000041 9300 00c1                     sts UCSR0B, r16
                                  
                                  ;*********************************
                                  ;INICIANDO VARIAVLES 
                                  ;***********************************
-00004a 2744                      	CLR		R20
-00004b 2755                      	CLR		R21
-00004c 2766                      	CLR		R22
-00004d 2777                      	CLR		R23
-00004e 2788                      	CLR		R24
-00004f 2733                      	CLR		COUNTER
-000050 2799                      	CLR		COUNTER2
-000051 2722                      	CLR		COUNTER3
-                                 
+000043 2744                      	CLR		R20
+000044 2755                      	CLR		R21
+000045 2766                      	CLR		R22
+000046 2777                      	CLR		R23
+000047 2788                      	CLR		R24
+000048 2733                      	CLR		COUNTER
+000049 2799                      	CLR		COUNTER2
+00004a 2722                      	CLR		COUNTER3
+00004b 2744                      	CLR		MODE
+00004c 24aa                      	CLR 	alarmaA
+00004d 24bb                      	CLR		alarmaB
+00004e 24cc                      	CLR		alarmaC
+00004f 24dd                      	CLR		alarmaD
+000050 27dd                      	CLR		R29
+000051 e001                      	LDI		R16, 0x01
+000052 2e50                      	MOV		fechaA, R16
+000053 2466                      	CLR		fechaB
+000054 2477                      	CLR		fechaC
+000055 2e80                      	MOV		fechaD, R16
+000056 2711                      	CLR		MESES
+000057 27cc                      	CLR		R28
+                                  
                                  	// habilita interrupciones
-000052 9478                      	SEI
+                                 
+                                 
+                                 ;*************** TABLA DE BÚSQUEDA ***************
+                                 TABLE:
+000058 7940
+000059 3024
+00005a 1219
+00005b 7802
+00005c 1000
+00005d 0308
+00005e 2146
+00005f 0e06                          .DB 0x40, 0x79, 0x24, 0x30, 0x19, 0x12, 0x02, 0x78, 0x00, 0x10, 0x08, 0x03, 0x46, 0x21, 0x06, 0x0E
+                                 
+                                 dias_del_mes:  // mas 2 dias a todos los dias del mes por un bug del codigo
+000060 3033
+000061 3233
+000062 3233
+000063 3333
+000064 3332
+000065 3332                      	.DB	0x33, 0x30, 0x33, 0x32, 0x33, 0x32, 0x33, 0x33, 0x32, 0x33, 0x32, 0x33
+                                 	// pero si te das cuenta si le restas 2 a cada uno da lo que deberia de ser 
+000066 9478                      		SEI
                                  
                                  void_loop:
-000053 b938                      	OUT		PORTC, COUNTER
-                                 
-000054 3040                      	CPI		MODE, 0
-000055 f029                      	BREQ	estado1
-000056 3041                      	CPI		MODE, 1
-000057 f081                      	BREQ	estado2
-000058 3042                      	CPI		MODE, 2
-000059 f079                      	BREQ	estado3
-00005a cff8                      	RJMP	void_loop
                                  
                                  
+000067 3040                          CPI     MODE, 0
+000068 f409                          BRNE    check1
+000069 c019                          RJMP    estado1
+                                 check1:
+00006a 3041                          CPI     MODE, 1
+00006b f409                          BRNE    check2
+00006c c02e                          RJMP    estado2
+                                 check2:
+00006d 3042                          CPI     MODE, 2
+00006e f409                          BRNE    check3
+00006f c040                          RJMP    estado3
+                                 check3:
+000070 3043                          CPI     MODE, 3
+000071 f409                          BRNE    check4
+000072 c052                          RJMP    estado4
+                                 check4:
+000073 3044                          CPI     MODE, 4
+000074 f409                          BRNE    check5
+000075 c064                          RJMP    estado5
+                                 check5:
+000076 3045                          CPI     MODE, 5
+000077 f409                          BRNE    check6
+000078 c076                          RJMP    estado6
+                                 check6:
+000079 3046                          CPI     MODE, 6
+00007a f409                          BRNE    check7
+00007b c088                          RJMP    estado7
+                                 check7:
+00007c 3047                          CPI     MODE, 7
+00007d f409                          BRNE    check8
+00007e c095                          RJMP    estado8
+                                 check8:
+00007f 3048                          CPI     MODE, 8
+000080 f731                          BRNE    void_loop
+000081 c0a8                          RJMP    estado9
                                  
-                                 estado1:
-00005b fd30                      	SBRC	COUNTER, 0
-00005c 940e 0071                 	CALL	DISPLAY_UPDATEA
-00005e ff30                      	SBRS	COUNTER, 0 
-00005f 940e 007d                 	CALL	DISPLAY_UPDATEB
-000061 ff30                      	SBRS	COUNTER, 0
-000062 940e 0089                 	CALL	DISPLAY_UPDATEC
-000064 ff30                      	SBRS	COUNTER, 0
-000065 940e 0095                 	CALL	DISPLAY_UPDATED
-000067 cfeb                      	rjmp	void_loop
+000082 cfe4                      RJMP    void_loop  ; Si no coincide con ningún estado, repetir el loop
                                  
-                                 estado2:
-000068 cfea                      RJMP	void_loop
+                                 estado1:	//Reloj normal
+                                 	
+                                 	//leds de modo
+000083 9840                      	CBI		PORTC, PC0
+000084 9841                      	CBI		PORTC, PC1
+000085 9842                      	CBI		PORTC, PC2
                                  
-                                 estado3:
-000069 cfe9                      RJMP	void_loop
+000086 b106                      	IN      R16, PINC          ; Leer el estado del puerto C
+000087 7108                      	ANDI    R16, 0b00011000    ; Filtrar solo A3 (C3) y A4 (C4)
+000088 3108                      	CPI     R16, 0b00011000    ; ¿Están ambos en 1? (ninguno presionado)
+000089 f009                      	BREQ    check_alarm        ; Si ambos están en 1, saltar (ningún botón presionado)
+00008a 982d                      	CBI     PORTB, PB5         ; Si al menos uno está presionado, apagar B5
                                  
+                                 check_alarm:
+00008b fdd0                      	SBRC    R29, 0             ; Si el bit 0 de R29 es 1...
+00008c 940e 0150                 	CALL    ALARMA             ; Llamar a la subrutina ALARMA
+                                 
+00008e fd30                      	SBRC	COUNTER, 0
+00008f 940e 015a                 	CALL	DISPLAY_UPDATEA
+000091 ff30                      	SBRS	COUNTER, 0 
+000092 940e 0166                 	CALL	DISPLAY_UPDATEB
+000094 fd30                      	SBRC	COUNTER, 0
+000095 940e 0172                 	CALL	DISPLAY_UPDATEC
+000097 ff30                      	SBRS	COUNTER, 0
+000098 940e 017e                 	CALL	DISPLAY_UPDATED
+00009a cfcc                      	rjmp	void_loop
+                                 
+                                 estado2: //configurar reloj normal (MINUTOS)
+                                 	
+00009b 9a40                      	SBI		PORTC, PC0
+00009c 9841                      	CBI		PORTC, PC1
+00009d 9842                      	CBI		PORTC, PC2
+                                 
+00009e fd30                      	SBRC	COUNTER, 0
+00009f 940e 015a                 	CALL	DISPLAY_UPDATEA
+0000a1 ff30                      	SBRS	COUNTER, 0 
+0000a2 940e 0166                 	CALL	DISPLAY_UPDATEB
+                                 
+                                 
+0000a4 b106                      	IN		R16, PINC		; Leer el estado de los botones
+0000a5 2fa0                      	MOV		R26, R16		; Copiar el valor a R26
+                                 
+                                 	; Detectar botón de aumento con antirrebote
+0000a6 fef3                      	SBRS	R15, 3 	; Si BUTTON_STATE[3] está en 0 (botón suelto)
+0000a7 ffa3                      	SBRS	R26, 3				; Si R26[3] está en 0 (botón presionado)
+0000a8 940e 01ea                 	CALL	aumento				; Llamar a la función de aumento
+                                 
+                                 	; Detectar botón de decremento con antirrebote
+0000aa fef4                      	SBRS	R15, 4		; Si BUTTON_STATE[4] está en 0 (botón suelto)
+0000ab ffa4                      	SBRS	R26, 4				; Si R26[4] está en 0 (botón presionado)
+0000ac 940e 01fc                 	CALL	decremento			; Llamar a la función de decremento
+                                 
+0000ae 2efa                      	MOV		R15, R26	; Guardar el estado actual del botón para la siguiente lectura
+                                 
+                                 
+0000af cfb7                      RJMP	void_loop
+                                 estado3: // configurar reloj normal (HORAS)
+                                 
+0000b0 9840                      	CBI		PORTC, PC0
+0000b1 9a41                      	SBI		PORTC, PC1
+0000b2 9842                      	CBI		PORTC, PC2
+                                 
+0000b3 ff30                      	SBRS	COUNTER, 0
+0000b4 940e 0172                 	CALL	DISPLAY_UPDATEC
+0000b6 fd30                      	SBRC	COUNTER, 0
+0000b7 940e 017e                 	CALL	DISPLAY_UPDATED
+                                 
+0000b9 b106                      	IN		R16, PINC		; Leer el estado de los botones
+0000ba 2fa0                      	MOV		R26, R16		; Copiar el valor a R15
+                                 
+                                 	; Detectar botón de aumento con antirrebote
+0000bb fef3                      	SBRS	R15, 3 	; Si BUTTON_STATE[3] está en 0 (botón suelto)
+0000bc ffa3                      	SBRS	R26, 3				; Si R15[3] está en 0 (botón presionado)
+0000bd 940e 0208                 	CALL	aumento2				; Llamar a la función de aumento
+                                 
+                                 	; Detectar botón de decremento con antirrebote
+0000bf fef4                      	SBRS	R15, 4		; Si BUTTON_STATE[4] está en 0 (botón suelto)
+0000c0 ffa4                      	SBRS	R26, 4				; Si R15[4] está en 0 (botón presionado)
+0000c1 940e 0220                 	CALL	decremento2			; Llamar a la función de decremento
+                                 
+0000c3 2efa                      	MOV		R15, R26	; Guardar el estado actual del botón para la siguiente lectura
+                                 
+0000c4 cfa2                      	rjmp	void_loop
+                                 
+                                 estado4:  // ENSEÑAR ALARMA
+                                 	
+0000c5 b106                      	IN      R16, PINC          ; Leer el estado del puerto C
+0000c6 7108                      	ANDI    R16, 0b00011000    ; Filtrar solo A3 (C3) y A4 (C4)
+0000c7 3108                      	CPI     R16, 0b00011000    ; ¿Ambos están en 1? (ninguno presionado)
+0000c8 f009                      	BREQ    no_alarma          ; Si ninguno está presionado, saltar
+0000c9 e0d1                      	LDI     R29, 0x01          ; Si A3 o A4 están presionados, cargar 0x01 en R29
+                                 
+                                 no_alarma:
+                                 
+0000ca fd30                      	SBRC	COUNTER, 0
+0000cb 940e 018a                 	CALL	DISPLAY_ALARMAA
+0000cd ff30                      	SBRS	COUNTER, 0 
+0000ce 940e 0196                 	CALL	DISPLAY_ALARMAB
+0000d0 fd30                      	SBRC	COUNTER, 0
+0000d1 940e 01a2                 	CALL	DISPLAY_ALARMAC
+0000d3 ff30                      	SBRS	COUNTER, 0
+0000d4 940e 01ae                 	CALL	DISPLAY_ALARMAD
+                                 
+                                 
+0000d6 9a40                      	SBI		PORTC, PC0
+0000d7 9a41                      	SBI		PORTC, PC1
+0000d8 9842                      	CBI		PORTC, PC2
+                                 
+0000d9 cf8d                      	rjmp	void_loop
+                                 
+                                 estado5: //	CONFIGURAR ALARMA AB (MINUTOS)
+                                 
+0000da 9840                      	CBI		PORTC, PC0
+0000db 9841                      	CBI		PORTC, PC1
+0000dc 9a42                      	SBI		PORTC, PC2
+                                 
+0000dd fd30                      	SBRC	COUNTER, 0
+0000de 940e 018a                 	CALL	DISPLAY_ALARMAA
+0000e0 ff30                      	SBRS	COUNTER, 0 
+0000e1 940e 0196                 	CALL	DISPLAY_ALARMAB
+                                 
+0000e3 b106                      	IN		R16, PINC		; Leer el estado de los botones
+0000e4 2fa0                      	MOV		R26, R16		; Copiar el valor a R26
+                                 
+                                 	; Detectar botón de aumento con antirrebote
+0000e5 fef3                      	SBRS	R15, 3 	; Si BUTTON_STATE[3] está en 0 (botón suelto)
+0000e6 ffa3                      	SBRS	R26, 3				; Si R26[3] está en 0 (botón presionado)
+0000e7 940e 022c                 	CALL	aumento3				; Llamar a la función de aumento
+                                 
+                                 	; Detectar botón de decremento con antirrebote
+0000e9 fef4                      	SBRS	R15, 4		; Si BUTTON_STATE[4] está en 0 (botón suelto)
+0000ea ffa4                      	SBRS	R26, 4				; Si R26[4] está en 0 (botón presionado)
+0000eb 940e 023e                 	CALL	decremento3			; Llamar a la función de decremento
+                                 
+0000ed 2efa                      	MOV		R15, R26	; Guardar el estado actual del botón para la siguiente lectura
+                                 
+0000ee cf78                      	rjmp	void_loop
+                                 
+                                 estado6: // CONFIGURAR ALARMA CD (HORAS)
+                                 
+0000ef 9a40                      	SBI		PORTC, PC0
+0000f0 9841                      	CBI		PORTC, PC1
+0000f1 9a42                      	SBI		PORTC, PC2
+                                 
+0000f2 fd30                      	SBRC	COUNTER, 0
+0000f3 940e 01a2                 	CALL	DISPLAY_ALARMAC
+0000f5 ff30                      	SBRS	COUNTER, 0
+0000f6 940e 01ae                 	CALL	DISPLAY_ALARMAD
+                                 
+0000f8 b106                      	IN		R16, PINC		; Leer el estado de los botones
+0000f9 2fa0                      	MOV		R26, R16		; Copiar el valor a R26
+                                 
+                                 	; Detectar botón de aumento con antirrebote
+0000fa fef3                      	SBRS	R15, 3 	; Si BUTTON_STATE[3] está en 0 (botón suelto)
+0000fb ffa3                      	SBRS	R26, 3				; Si R26[3] está en 0 (botón presionado)
+0000fc 940e 024f                 	CALL	aumento4				; Llamar a la función de aumento
+                                 
+                                 	; Detectar botón de decremento con antirrebote
+0000fe fef4                      	SBRS	R15, 4		; Si BUTTON_STATE[4] está en 0 (botón suelto)
+0000ff ffa4                      	SBRS	R26, 4				; Si R26[4] está en 0 (botón presionado)
+000100 940e 0267                 	CALL	decremento4		; Llamar a la función de decremento
+                                 
+000102 2efa                      	MOV		R15, R26	; Guardar el estado actual del botón para la siguiente lectura
+                                 
+000103 cf63                      	RJMP	void_loop
+                                 
+                                 estado7: //mostrar fecha
+000104 9840                      	CBI		PORTC, PC0
+000105 9a41                      	SBI		PORTC, PC1
+000106 9a42                      	SBI		PORTC, PC2
+                                 
+000107 fd30                      	SBRC	COUNTER, 0
+000108 940e 01ba                 	CALL	DISPLAY_fechaA
+00010a ff30                      	SBRS	COUNTER, 0 
+00010b 940e 01c6                 	CALL	DISPLAY_fechaB
+00010d fd30                      	SBRC	COUNTER, 0
+00010e 940e 01d2                 	CALL	DISPLAY_fechaC
+000110 ff30                      	SBRS	COUNTER, 0
+000111 940e 01de                 	CALL	DISPLAY_fechaD
+                                 
+                                 	
+                                 
+000113 cf53                      	RJMP	void_loop
+                                 estado8: // incrementar decrementar meses
+000114 9a40                      	SBI		PORTC, PC0
+000115 9a41                      	SBI		PORTC, PC1
+000116 9a42                      	SBI		PORTC, PC2
+000117 2700                      	clr		R16
+                                 
+000118 b106                      	IN		R16, PINC		
+000119 2fa0                      	MOV		R26, R16		
+                                 
+                                 	
+00011a fef3                      	SBRS	R15, 3 
+00011b ffa3                      	SBRS	R26, 3				
+00011c 940e 02bd                 	CALL	incremento_mes		
+                                 
+00011e fef4                      	SBRS	R15, 4		
+00011f ffa4                      	SBRS	R26, 4				
+000120 940e 02d5                 	CALL	decremento_mes
+                                 
+000122 2efa                      	MOV		R15, R26	; Guardar el estado actual del botón para la siguiente lectura
+                                 
+000123 fd30                      	SBRC	COUNTER, 0
+000124 940e 01d2                 	CALL	DISPLAY_fechaC
+000126 ff30                      	SBRS	COUNTER, 0
+000127 940e 01de                 	CALL	DISPLAY_fechaD
+                                 
+                                 
+                                 
+000129 cf3d                      	RJMP	void_loop
+                                 estado9: //incrementar/ decrementar  dias
+                                 
+00012a fd30                      	SBRC	COUNTER, 0
+00012b 940e 01ba                 	CALL	DISPLAY_fechaA
+00012d ff30                      	SBRS	COUNTER, 0 
+00012e 940e 01c6                 	CALL	DISPLAY_fechaB
+000130 2700                      	CLR		R16
+                                 
+000131 b106                      	IN		R16, PINC		
+000132 2fa0                      	MOV		R26, R16		
+                                 
+                                 	
+000133 fef3                      	SBRS	R15, 3 
+000134 ffa3                      	SBRS	R26, 3				
+000135 940e 0278                 	CALL	incremento_dia				
+                                 
+000137 fef4                      	SBRS	R15, 4		
+000138 ffa4                      	SBRS	R26, 4				
+000139 940e 02a0                 	CALL	decremento_dia
+                                 
+00013b 2efa                      	MOV		R15, R26	; Guardar el estado actual del botón para la siguiente lectura
+                                 
+                                 
+00013c 303a                      	CPI		COUNTER, 10
+00013d f419                      	BRNE	no_paso_nada
+                                 
+00013e 9a30                          SBI		PINC, 0 ; Alternar el estado del pin D7
+00013f 9a31                      	SBI		PINC, 1 ; Alternar el estado del pin D7
+000140 9a32                      	SBI		PINC, 2 ; Alternar el estado del pin D7
+                                 no_paso_nada:
+                                 
+000141 cf25                      	RJMP	void_loop
                                  ;*********************************
                                  ;SUB RUTINAS 
                                  ;*********************************
                                  INIT_TMR0:		//configuramos el timer0
-00006a e000                      	LDI		R16, 0x00			
-00006b bd04                      	OUT		TCCR0A, R16				//modo normal del timer0
-00006c e003                      	LDI		R16, (1 << CS01) | (1 << CS00)
-00006d bd05                      	OUT		TCCR0B, R16			// configuramos el prescaler con 64
-00006e e604                      	LDI		R16, T0VALUE
-00006f bd06                      	OUT		TCNT0, R16
-000070 9508                      	RET 
+000142 e000                      	LDI		R16, 0x00			
+000143 bd04                      	OUT		TCCR0A, R16				//modo normal del timer0
+000144 e003                      	LDI		R16, (1 << CS01) | (1 << CS00)
+000145 bd05                      	OUT		TCCR0B, R16			// configuramos el prescaler con 64
+000146 e604                      	LDI		R16, T0VALUE
+000147 bd06                      	OUT		TCNT0, R16
+000148 9508                      	RET 
+                                 
+                                 INIT_PORTC:
+000149 e200                      	LDI		R16, (1 << PCINT13) 
+00014a 9300 006c                 	STS		PCMSK1, R16
+00014c e002                      	LDI		R16, (1 << PCIE1)		// PING CHANCE PARA PORTC 
+00014d 9300 0068                 	STS		PCICR, R16
+00014f 9508                      	RET
+                                 
+                                 ALARMA:
+000150 115a                      	CPSE	displayA, alarmaA
+000151 9508                      	RET	
+000152 116b                      	CPSE	displayB, alarmaB
+000153 9508                      	RET	
+000154 117c                      	CPSE	displayC, alarmaC
+000155 9508                      	RET	
+000156 118d                      	CPSE	displayD, alarmaD
+000157 9508                      	RET
+000158 9a2d                      	SBI		PORTB, PB5
+000159 9508                      	RET
                                  
                                  DISPLAY_UPDATEA:
-000071 982b                      	CBI		PORTB,  PB3
-000072 982a                      	CBI		PORTB,  PB2
-000073 9829                      	CBI		PORTB,  PB1
-000074 9828                      	CBI		PORTB,  PB0	
-000075 e0f1                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
-000076 eae6                          LDI		ZL, LOW(TABLE<<1)    
-000077 0fe5                          ADD		ZL, R21				 // R20 es nuestro contador
-000078 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
-000079 9104                          LPM		R16, Z               // Carga el byte Z en r16
-00007a b90b                          OUT		PORTD, R16			 // display del valor deseado
-00007b 9a28                      	SBI		PORTB, PB0
-00007c 9508                          RET
+00015a 982b                      	CBI		PORTB,  PB3
+00015b 982a                      	CBI		PORTB,  PB2
+00015c 9829                      	CBI		PORTB,  PB1
+00015d 9828                      	CBI		PORTB,  PB0	
+00015e e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+00015f ebe0                          LDI		ZL, LOW(TABLE<<1)    
+000160 0fe5                          ADD		ZL, R21				 // R20 es nuestro contador
+000161 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+000162 9104                          LPM		R16, Z               // Carga el byte Z en r16
+000163 b90b                          OUT		PORTD, R16			 // display del valor deseado
+000164 9a28                      	SBI		PORTB, PB0
+000165 9508                          RET
                                  
                                  DISPLAY_UPDATEB:
-00007d 982b                      	CBI		PORTB,  PB3
-00007e 982a                      	CBI		PORTB,  PB2
-00007f 9829                      	CBI		PORTB,  PB1
-000080 9828                      	CBI		PORTB,  PB0	
-000081 e0f1                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
-000082 eae6                          LDI		ZL, LOW(TABLE<<1)    
-000083 0fe6                          ADD		ZL, R22				 // R20 es nuestro contador
-000084 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
-000085 9104                          LPM		R16, Z               // Carga el byte Z en r16
-000086 b90b                          OUT		PORTD, R16			 // display del valor deseado
-000087 9a29                      	SBI		PORTB, PB1
-000088 9508                          RET
+000166 982b                      	CBI		PORTB,  PB3
+000167 982a                      	CBI		PORTB,  PB2
+000168 9829                      	CBI		PORTB,  PB1
+000169 9828                      	CBI		PORTB,  PB0	
+00016a e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+00016b ebe0                          LDI		ZL, LOW(TABLE<<1)    
+00016c 0fe6                          ADD		ZL, R22				 // R20 es nuestro contador
+00016d 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+00016e 9104                          LPM		R16, Z               // Carga el byte Z en r16
+00016f b90b                          OUT		PORTD, R16			 // display del valor deseado
+000170 9a29                      	SBI		PORTB, PB1
+000171 9508                          RET
                                  
                                  DISPLAY_UPDATEC:
-000089 982b                      	CBI		PORTB,  PB3
-00008a 982a                      	CBI		PORTB,  PB2
-00008b 9829                      	CBI		PORTB,  PB1
-00008c 9828                      	CBI		PORTB,  PB0	
-00008d e0f1                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
-00008e eae6                          LDI		ZL, LOW(TABLE<<1)    
-00008f 0fe7                          ADD		ZL, R23				 // R20 es nuestro contador
-000090 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
-000091 9104                          LPM		R16, Z               // Carga el byte Z en r16
-000092 b90b                          OUT		PORTD, R16			 // display del valor deseado
-000093 9a2a                      	SBI		PORTB, PB2
-000094 9508                          RET
+000172 982b                      	CBI		PORTB,  PB3
+000173 982a                      	CBI		PORTB,  PB2
+000174 9829                      	CBI		PORTB,  PB1
+000175 9828                      	CBI		PORTB,  PB0	
+000176 e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+000177 ebe0                          LDI		ZL, LOW(TABLE<<1)    
+000178 0fe7                          ADD		ZL, R23				 // R20 es nuestro contador
+000179 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+00017a 9104                          LPM		R16, Z               // Carga el byte Z en r16
+00017b b90b                          OUT		PORTD, R16			 // display del valor deseado
+00017c 9a2a                      	SBI		PORTB, PB2
+00017d 9508                          RET
                                  
                                  DISPLAY_UPDATED:
-000095 982b                      	CBI		PORTB,  PB3
-000096 982a                      	CBI		PORTB,  PB2
-000097 9829                      	CBI		PORTB,  PB1
-000098 9828                      	CBI		PORTB,  PB0	
-000099 e0f1                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
-00009a eae6                          LDI		ZL, LOW(TABLE<<1)    
-00009b 0fe8                          ADD		ZL, R24				 // R20 es nuestro contador
-00009c 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
-00009d 9104                          LPM		R16, Z               // Carga el byte Z en r16
-00009e b90b                          OUT		PORTD, R16			 // display del valor deseado
-00009f 9a2b                      	SBI		PORTB, PB3
-0000a0 9508                          RET
+00017e 982b                      	CBI		PORTB,  PB3
+00017f 982a                      	CBI		PORTB,  PB2
+000180 9829                      	CBI		PORTB,  PB1
+000181 9828                      	CBI		PORTB,  PB0	
+000182 e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+000183 ebe0                          LDI		ZL, LOW(TABLE<<1)    
+000184 0fe8                          ADD		ZL, R24				 // R20 es nuestro contador
+000185 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+000186 9104                          LPM		R16, Z               // Carga el byte Z en r16
+000187 b90b                          OUT		PORTD, R16			 // display del valor deseado
+000188 9a2b                      	SBI		PORTB, PB3
+000189 9508                          RET
+                                 
+                                 //DISPLAYC ALARMA
+                                 
+                                 	
+                                 DISPLAY_ALARMAA:
+00018a 982b                      	CBI		PORTB,  PB3
+00018b 982a                      	CBI		PORTB,  PB2
+00018c 9829                      	CBI		PORTB,  PB1
+00018d 9828                      	CBI		PORTB,  PB0	
+00018e e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+00018f ebe0                          LDI		ZL, LOW(TABLE<<1)    
+000190 0dea                          ADD		ZL, alarmaA				 // R20 es nuestro contador
+000191 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+000192 9104                          LPM		R16, Z               // Carga el byte Z en r16
+000193 9a28                          SBI		PORTB, PB0
+000194 b90b                      	OUT		PORTD, R16			 // display del valor deseado
+                                 	
+000195 9508                          RET
+                                 
+                                 DISPLAY_ALARMAB:
+000196 982b                      	CBI		PORTB,  PB3
+000197 982a                      	CBI		PORTB,  PB2
+000198 9829                      	CBI		PORTB,  PB1
+000199 9828                      	CBI		PORTB,  PB0	
+00019a e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+00019b ebe0                          LDI		ZL, LOW(TABLE<<1)    
+00019c 0deb                          ADD		ZL, alarmaB				 // R20 es nuestro contador
+00019d 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+00019e 9104                          LPM		R16, Z               // Carga el byte Z en r16
+00019f b90b                          OUT		PORTD, R16			 // display del valor deseado
+0001a0 9a29                      	SBI		PORTB, PB1
+0001a1 9508                          RET
+                                 
+                                 DISPLAY_ALARMAC:
+0001a2 982b                      	CBI		PORTB,  PB3
+0001a3 982a                      	CBI		PORTB,  PB2
+0001a4 9829                      	CBI		PORTB,  PB1
+0001a5 9828                      	CBI		PORTB,  PB0	
+0001a6 e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+0001a7 ebe0                          LDI		ZL, LOW(TABLE<<1)    
+0001a8 0dec                          ADD		ZL, alarmaC				 // R20 es nuestro contador
+0001a9 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+0001aa 9104                          LPM		R16, Z               // Carga el byte Z en r16
+0001ab b90b                          OUT		PORTD, R16			 // display del valor deseado
+0001ac 9a2a                      	SBI		PORTB, PB2
+0001ad 9508                          RET
+                                 
+                                 DISPLAY_ALARMAD:
+0001ae 982b                      	CBI		PORTB,  PB3
+0001af 982a                      	CBI		PORTB,  PB2
+0001b0 9829                      	CBI		PORTB,  PB1
+0001b1 9828                      	CBI		PORTB,  PB0	
+0001b2 e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+0001b3 ebe0                          LDI		ZL, LOW(TABLE<<1)    
+0001b4 0ded                          ADD		ZL, alarmaD				 // R20 es nuestro contador
+0001b5 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+0001b6 9104                          LPM		R16, Z               // Carga el byte Z en r16
+0001b7 b90b                          OUT		PORTD, R16			 // display del valor deseado
+0001b8 9a2b                      	SBI		PORTB, PB3
+0001b9 9508                          RET
+                                 
+                                 DISPLAY_FECHAA:
+0001ba 982b                      	CBI		PORTB,  PB3
+0001bb 982a                      	CBI		PORTB,  PB2
+0001bc 9829                      	CBI		PORTB,  PB1
+0001bd 9828                      	CBI		PORTB,  PB0	
+0001be e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+0001bf ebe0                          LDI		ZL, LOW(TABLE<<1)    
+0001c0 0de5                          ADD		ZL, fechaA				 // R20 es nuestro contador
+0001c1 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+0001c2 9104                          LPM		R16, Z               // Carga el byte Z en r16
+0001c3 b90b                      	OUT		PORTD, R16			 // display del valor deseado
+0001c4 9a2a                      	SBI		PORTB, PB2
+0001c5 9508                          RET
+                                 
+                                 DISPLAY_FECHAB:
+0001c6 982b                      	CBI		PORTB,  PB3
+0001c7 982a                      	CBI		PORTB,  PB2
+0001c8 9829                      	CBI		PORTB,  PB1
+0001c9 9828                      	CBI		PORTB,  PB0	
+0001ca e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+0001cb ebe0                          LDI		ZL, LOW(TABLE<<1)    
+0001cc 0de6                          ADD		ZL, fechaB				 // R20 es nuestro contador
+0001cd 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+0001ce 9104                          LPM		R16, Z               // Carga el byte Z en r16
+0001cf b90b                          OUT		PORTD, R16			 // display del valor deseado
+0001d0 9a2b                      	SBI		PORTB, PB3
+0001d1 9508                          RET
+                                 
+                                 DISPLAY_FECHAC:
+0001d2 982b                      	CBI		PORTB,  PB3
+0001d3 982a                      	CBI		PORTB,  PB2
+0001d4 9829                      	CBI		PORTB,  PB1
+0001d5 9828                      	CBI		PORTB,  PB0	
+0001d6 e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+0001d7 ebe0                          LDI		ZL, LOW(TABLE<<1)    
+0001d8 0de7                          ADD		ZL, fechaC				 // R20 es nuestro contador
+0001d9 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+0001da 9104                          LPM		R16, Z               // Carga el byte Z en r16
+0001db b90b                          OUT		PORTD, R16			 // display del valor deseado
+0001dc 9a29                      	SBI		PORTB, PB1
+0001dd 9508                          RET
+                                 
+                                 DISPLAY_FECHAD:
+0001de 982b                      	CBI		PORTB,  PB3
+0001df 982a                      	CBI		PORTB,  PB2
+0001e0 9829                      	CBI		PORTB,  PB1
+0001e1 9828                      	CBI		PORTB,  PB0	
+0001e2 e0f0                      	LDI		ZH, HIGH(TABLE<<1)   // ZH:ZL PUNTERO QUE APUNTA A LA TABLA 
+0001e3 ebe0                          LDI		ZL, LOW(TABLE<<1)    
+0001e4 0de8                          ADD		ZL, fechaD				 // R20 es nuestro contador
+0001e5 1df1                          ADC		ZH, R1               // R1 siempre es 0 por lo que 0 + r20
+0001e6 9104                          LPM		R16, Z               // Carga el byte Z en r16
+0001e7 b90b                          OUT		PORTD, R16			 // display del valor deseado
+0001e8 9a28                      	SBI		PORTB, PB0
+0001e9 9508                          RET
+                                 
+                                 //aumento y decremento PARA A Y B
+                                 aumento:
+                                 
+                                 
+                                 
+0001ea 9553                      	INC		DISPLAYA
+0001eb e00b                      	LDI		R16, 0x0B
+0001ec 1350                      	CPSE	DISPLAYA, R16
+0001ed c002                      	RJMP	SEGUIR1
+0001ee 940e 01f6                 	CALL	RESET
+                                 SEGUIR1:
+0001f0 e006                      	LDI		R16, 0x06
+0001f1 1360                      	CPSE	DISPLAYB, R16
+0001f2 c002                      	RJMP	SEGUIR2
+0001f3 940e 01f9                 	CALL	RESET2
+                                 SEGUIR2: 
+0001f5 9508                      	RET
+                                 	
+                                 RESET:
+0001f6 2755                      	CLR		DISPLAYA
+0001f7 9563                      	INC		DISPLAYB
+                                 
+0001f8 cea2                      	RJMP	estado2
+                                 
+                                 RESET2:
+0001f9 2755                      	CLR		DISPLAYA
+0001fa 2766                      	CLR		DISPLAYB
+0001fb ce9f                      	RJMP	estado2
+                                 
+                                 decremento:	
+0001fc 955a                      	DEC		DISPLAYA				
+0001fd 3f5f                      	CPI		DISPLAYA, 0xFF			
+0001fe f009                      	BREQ	DECDB					
+0001ff 9508                      	RET								
+                                 
+                                 DECDB:
+000200 e059                      	LDI		DISPLAYA, 0x09			
+000201 956a                      	DEC		DISPLAYB				
+000202 3f6f                      	CPI		DISPLAYB, 0xFF			
+000203 f009                      	BREQ	MAXEO_59				
+000204 9508                      	RET								
+                                 
+                                 MAXEO_59:
+000205 e059                      	LDI		DISPLAYA, 0x09			
+000206 e065                      	LDI		DISPLAYB, 0x05			
+000207 9508                      	RET
+                                 
+                                 
+                                 
+                                 //aumento y decremento PARA d y C
+                                 
+                                 aumento2:
+000208 9573                      	INC		DISPLAYC
+000209 e00b                      	LDI		R16, 0x0B
+00020a 1370                      	CPSE	DISPLAYC, R16
+00020b c002                      	RJMP	SEGUIR3
+00020c 940e 021a                 	CALL	RESETCD
+                                 SEGUIR3:
+00020e e002                      	LDI		R16, 0x02
+00020f 1380                      	CPSE	DISPLAYD, R16
+000210 c002                      	RJMP	SEGUIR4
+000211 940e 0214                 	CALL	chekeo_24
+                                 SEGUIR4: 
+000213 9508                      	RET
+                                 chekeo_24:
+000214 e005                      	LDI		R16, 0x05
+000215 1370                      	CPSE	DISPLAYC, R16
+000216 c002                      	RJMP	SEGUIR5
+000217 940e 021d                 	CALL	RESET2CD
+                                 SEGUIR5:
+000219 9508                      	RET
+                                 
+                                 RESETCD:
+00021a 2777                      	CLR		DISPLAYC
+00021b 9583                      	INC		DISPLAYD
+00021c ce4a                      	RJMP	void_loop
+                                 
+                                 RESET2CD:
+00021d 2777                      	CLR		DISPLAYC
+00021e 2788                      	CLR		DISPLAYD
+00021f ce47                      	RJMP	void_loop	
+                                 decremento2:	
+000220 957a                      	DEC		DISPLAYC				
+000221 3f7f                      	CPI		DISPLAYC, 0xFF			
+000222 f009                      	BREQ	decrement_CD			
+000223 9508                      	RET								
+                                 
+                                 decrement_CD:
+000224 e079                      	LDI		DISPLAYC, 0x09			
+000225 958a                      	DEC		DISPLAYD				
+000226 3f8f                      	CPI		DISPLAYD, 0xFF			
+000227 f009                      	BREQ	MAXEO_23				
+000228 9508                      	RET								
+                                 
+                                 MAXEO_23:
+000229 e073                      	LDI		DISPLAYC, 0x03			
+00022a e082                      	LDI		DISPLAYD, 0x02			 
+00022b 9508                      	RET
+                                 
+                                 // Aumento y decremento de la alarma A Y B (MInutos)
+                                 aumento3:
+00022c 94a3                      	INC		alarmaA
+00022d e00b                      	LDI		R16, 0x0B
+00022e 12a0                      	CPSE	alarmaA, R16
+00022f c002                      	RJMP	SEGUIRA1
+000230 940e 0238                 	CALL	RESETA
+                                 SEGUIRA1:
+000232 e006                      	LDI		R16, 0x06
+000233 12b0                      	CPSE	alarmaB, R16
+000234 c002                      	RJMP	SEGUIRA2
+000235 940e 023b                 	CALL	RESETA2
+                                 SEGUIRA2: 
+000237 9508                      	RET
+                                 	
+                                 RESETA:
+000238 24aa                      	CLR		alarmaA
+000239 94b3                      	INC		alarmaB
+                                 
+00023a ce9f                      	RJMP	estado5
+                                 
+                                 RESETA2:
+00023b 24aa                      	CLR		alarmaA
+00023c 24bb                      	CLR		alarmaB
+00023d ce9c                      	RJMP	estado5
+                                 
+                                 decremento3:	
+00023e 94aa                      	DEC		alarmaA	
+00023f 2d0a                      	MOV		R16, alarmaA			
+000240 3f0f                      	CPI		R16, 0xFF			
+000241 f009                      	BREQ	under_alarma					
+000242 9508                      	RET								
+                                 
+                                 under_alarma:
+000243 e009                      	LDI		R16, 0x09		
+000244 2ea0                      	MOV		alarmaA, R16	
+000245 94ba                      	DEC		alarmaB		
+000246 2d0b                      	MOV		R16, alarmaB		
+000247 3f0f                      	CPI		R16, 0xFF			
+000248 f009                      	BREQ	MAXEOA_59				
+000249 9508                      	RET								
+                                 
+                                 MAXEOA_59:
+00024a e009                      	LDI		R16, 0x09	
+00024b 2ea0                      	MOV		ALARMAA, R16		
+00024c e005                      	LDI		R16, 0x05	
+00024d 2eb0                      	MOV		ALARMAB, R16		
+00024e 9508                      	RET
+                                 
+                                 // Aumento y decremento de la alarma C y D (HORAS)
+                                 aumento4:
+00024f 94c3                      	INC		alarmaC
+000250 e00b                      	LDI		R16, 0x0B
+000251 12c0                      	CPSE	alarmaC, R16
+000252 c002                      	RJMP	SEGUIRA3
+000253 940e 0261                 	CALL	RESETACD
+                                 SEGUIRA3:
+000255 e002                      	LDI		R16, 0x02
+000256 12d0                      	CPSE	alarmaD, R16
+000257 c002                      	RJMP	SEGUIRA4
+000258 940e 025b                 	CALL	chekeo_24A
+                                 SEGUIRA4: 
+00025a 9508                      	RET
+                                 chekeo_24A:
+00025b e005                      	LDI		R16, 0x05
+00025c 12c0                      	CPSE	alarmaC, R16
+00025d c002                      	RJMP	SEGUIRA5
+00025e 940e 0264                 	CALL	RESET2ACD
+                                 SEGUIRA5:
+000260 9508                      	RET
+                                 
+                                 RESETACD:
+000261 24cc                      	CLR		alarmaC
+000262 94d3                      	INC		alarmaD
+000263 ce03                      	RJMP	void_loop
+                                 
+                                 RESET2ACD:
+000264 24cc                      	CLR		alarmaC
+000265 24dd                      	CLR		alarmaD
+000266 ce00                      	RJMP	void_loop	
+                                 decremento4:	
+000267 94ca                      	DEC		alarmaC		
+000268 2d0c                      	MOV		R16, alarmaC		
+000269 3f0f                      	CPI		r16, 0xFF			
+00026a f009                      	BREQ	decrementA_CD			
+00026b 9508                      	RET								
+                                 
+                                 decrementA_CD:
+00026c e009                      	LDI		R16, 0x09	
+00026d 2ec0                      	MOV		alarmaC, R16		
+00026e 94da                      	DEC		alarmaD
+00026f 2d0d                      	MOV		R16, alarmaD			
+000270 3f0f                      	CPI		R16, 0xFF			
+000271 f009                      	BREQ	MAXEO_A23				
+000272 9508                      	RET								
+                                 
+                                 MAXEO_A23: 
+000273 e003                      	LDI		R16, 0x03
+000274 2ec0                      	MOV		alarmaC, R16			
+000275 e002                      	LDI		R16, 0x02	
+000276 2ed0                      	MOV		alarmaD, R16		 
+000277 9508                      	RET
+                                 
+                                 //subrutinas modo fecha y dia
+                                 incremento_dia:
+                                 
+000278 93af                      	PUSH    R26           ; Guardar R17 en la pila
+000279 93ef                      	PUSH    R30           ; Guardar R18 en la pila
+00027a 930f                      	PUSH    R16           ; Guardar R16 en la pila
+                                 
+00027b 2da7                      	MOV     R26, fechaC   ; Mover fechaC a un registro válido (R16-R31)
+00027c e00a                      	LDI     R16, 10       ; Cargar 10 en R16 para multiplicar
+00027d 9fa0                      	MUL     R26, R16      ; Multiplica fechaC * 10
+00027e 2de0                      	MOV     R30, R0       ; Guardar resultado en R18 (MESES temporal)
+00027f 2411                      	CLR     R1            ; Limpiar R1 para evitar datos basura
+000280 0de8                      	ADD     R30, fechaD   ; Sumar fechaD al resultado
+                                 
+000281 2f1e                      	MOV     MESES, R30  ; Guardar el resultado en MESES
+                                 
+000282 910f                      	POP     R16           ; Restaurar R16 desde la pila
+000283 91ef                      	POP     R30           ; Restaurar R18 desde la pila
+000284 91af                      	POP     R26          ; Restaurar R17 desde la pila
+                                 
+000285 5011                      	SUBI    MESES, 1         ; Restar 1 para ajustar índice a base 0
+000286 9453                      	INC		fechaA
+000287 2d05                      	MOV		R16, fechaA
+000288 300a                      	CPI		R16, 0x0A
+000289 f419                      	BRNE	checkeo_limite
+00028a 2455                      	CLR		fechaA
+00028b 9463                      	INC		fechaB
+                                 	
+                                 	
+                                 
+00028c 9508                      	RET
+                                 checkeo_limite:
+00028d ece0                      	LDI     ZL, LOW(dias_del_mes << 1)
+00028e e0f0                          LDI     ZH, HIGH(dias_del_mes << 1)
+00028f 0fe1                          ADD     ZL, MESES
+000290 91c4                          LPM     R28, Z     
+                                 
+000291 2d06                          MOV     R16, fechaB
+000292 0f00                          LSL     R16         
+000293 0f00                          LSL     R16
+000294 0f00                          LSL     R16
+000295 0f00                          LSL     R16
+000296 0d05                          ADD     R16, fechaA   
+000297 170c                          CP      R16, R28
+000298 f010                          BRLO    NO_OVERFLOW 
+000299 940e 029c                     CALL    OVER_DIA   
+                                 NO_OVERFLOW:
+00029b 9508                          RET
+                                 OVER_DIA:
+00029c e001                      	LDI		R16, 0x01
+00029d 2e50                      	MOV		fechaA, R16
+00029e 2466                          CLR     fechaB   
+00029f 9508                      	RET
+                                 
+                                 	
+                                 decremento_dia:
+0002a0 2d06                      	MOV		R16, fechaB
+0002a1 3000                      	CPI		R16, 0x00
+0002a2 f049                      	BREQ	RESET_DIA
+0002a3 945a                      	DEC		fechaA
+0002a4 2d05                      	MOV		R16, fechaA
+0002a5 3f0f                      	CPI		R16, 0xFF
+0002a6 f009                      	BREQ	DECDIA_REST
+0002a7 9508                      	RET
+                                 DECDIA_REST: 
+0002a8 e009                      	LDI		R16, 0x09
+0002a9 2e50                      	MOV		fechaA, R16
+0002aa 946a                      	DEC		fechaB
+0002ab 9508                      	RET
+                                 RESET_DIA: 
+0002ac 945a                      	DEC		fechaA
+0002ad 2d05                      	MOV		R16, fechaA
+0002ae 3000                      	CPI		R16, 0x00
+0002af f009                      	BREQ	UNDER_DIA
+0002b0 9508                      	RET
+                                 UNDER_DIA: 
+0002b1 ece0                      	LDI		ZL, LOW(dias_del_mes << 1)
+0002b2 e0f0                      	LDI		ZH, HIGH(dias_del_mes << 1)
+0002b3 0fe1                      	ADD		ZL, MESES
+0002b4 91c4                      	LPM		R28, Z
+0002b5 2e6c                      	MOV		fechaB, R28
+                                 	//SWAP	R6	//POSIBLE CAMBIO
+0002b6 0c66                      	LSL		fechaB
+0002b7 0c66                      	LSL		fechaB
+0002b8 0c66                      	LSL		fechaB
+0002b9 0c66                      	LSL		fechaB
+0002ba 70af                      	ANDI	R26, 0x0F
+0002bb 2e5c                      	MOV		fechaA, R28
+0002bc 9508                      	RET
+                                 
+                                 //subrutinas para aumentar/decementar el mes
+                                 
+                                 incremento_mes:
+0002bd 9483                      	INC		fechaD
+0002be e00b                      	LDI		R16, 0x0B
+0002bf 1280                      	CPSE	fechaD, R16
+0002c0 c002                      	RJMP	SEGUIRA3M
+0002c1 940e 02cf                 	CALL	RESETACDM
+                                 SEGUIRA3M:
+0002c3 e001                      	LDI		R16, 0x01
+0002c4 1270                      	CPSE	fechaC, R16		//decena del mes
+0002c5 c002                      	RJMP	SEGUIRA4M
+0002c6 940e 02c9                 	CALL	chekeo_12
+                                 SEGUIRA4M: 
+0002c8 9508                      	RET
+                                 chekeo_12:
+0002c9 e004                      	LDI		R16, 0x04
+0002ca 1280                      	CPSE	fechaD, R16
+0002cb c002                      	RJMP	SEGUIRA5M
+0002cc 940e 02d2                 	CALL	RESET2ACDM
+                                 SEGUIRA5M:
+0002ce 9508                      	RET
+                                 
+                                 RESETACDM:
+0002cf 2488                      	CLR		fechaD
+0002d0 9473                      	INC		fechaC
+0002d1 cd95                      	RJMP	void_loop
+                                 
+                                 RESET2ACDM:
+0002d2 2488                      	CLR		fechaD
+0002d3 2477                      	CLR		fechaC
+0002d4 cd92                      	RJMP	void_loop	
+                                 
+                                 decremento_mes:	
+0002d5 948a                      	DEC		fechaD		
+0002d6 2d08                      	MOV		R16, fechaD	
+0002d7 3000                      	CPI		r16, 0x00			
+0002d8 f009                      	BREQ	decrementA_CDM		
+0002d9 9508                      	RET								
+                                 
+                                 decrementA_CDM:
+0002da e009                      	LDI		R16, 0x09	
+0002db 2e80                      	MOV		fechaD, R16		
+0002dc 947a                      	DEC		fechaC
+0002dd 2d07                      	MOV		R16, fechaC		
+0002de 3f0f                      	CPI		R16, 0xFF			
+0002df f009                      	BREQ	MAXEO_12			
+0002e0 9508                      	RET								
+                                 
+                                 MAXEO_12: 
+0002e1 e002                      	LDI		R16, 0x02
+0002e2 2e80                      	MOV		fechaD, R16			
+0002e3 e001                      	LDI		R16, 0x01	
+0002e4 2e70                      	MOV		fechaC, R16		 
+0002e5 9508                      	RET
+                                 
+                                 
                                  ;*********************************
                                  ;INTERRUPCIONES 
                                  ;*********************************
                                  timer0_overflow:
-0000a1 930f                      	PUSH	R16
-0000a2 b70f                      	IN		R16, SREG
-0000a3 930f                      	PUSH	R16
+0002e6 94f8                      	CLI	
+0002e7 930f                      	PUSH	R16
+0002e8 b70f                      	IN		R16, SREG
+0002e9 930f                      	PUSH	R16
                                  
-0000a4 e604                      	LDI		R16, T0VALUE
-0000a5 bd06                      	OUT		TCNT0,	R16
                                  	
-0000a6 9533                      	INC		COUNTER
-0000a7 9523                      	INC		COUNTER3
+0002ea e604                      	LDI		R16, T0VALUE
+0002eb bd06                      	OUT		TCNT0,	R16
+                                 	
+0002ec 9533                      	INC		COUNTER
+0002ed 9523                      	INC		COUNTER3
                                  
                                  
-0000a8 3322                      	CPI		COUNTER3, 50
-0000a9 f4f9                      	BRNE	EXIT_TMR0_ISR
-0000aa 2722                      	CLR		COUNTER3		
+0002ee 3322                      	CPI		COUNTER3, 50
+0002ef f5b1                      	BRNE	EXIT_TMR0_ISR
+0002f0 2722                      	CLR		COUNTER3		
                                  
+0002f1 9a1c                          SBI		PINB, 4 ; Alternar el estado del pin D7
                                  
-0000ab 9a4f                         SBI  PIND, 7  ; Alternar el estado del pin D7
+0002f2 3634                      	CPI		COUNTER, 100
+0002f3 f591                      	BRNE	EXIT_TMR0_ISR
+0002f4 2733                      	CLR		COUNTER		
                                  
+0002f5 9593                      	INC		COUNTER2
                                  
+0002f6 339c                      	CPI		COUNTER2, 60
+0002f7 f571                      	BRNE	EXIT_TMR0_ISR
+0002f8 2799                      	CLR		COUNTER2
+0002f9 9553                      	INC		displayA
+0002fa 305a                      	CPI		displayA, MAX_displayA
+0002fb f551                      	BRNE	EXIT_TMR0_ISR
+0002fc 2755                      	CLR		displayA
                                  
-0000ac 3634                      	CPI		COUNTER, 100
-0000ad f4d9                      	BRNE	EXIT_TMR0_ISR
-0000ae 2733                      	CLR		COUNTER		
+0002fd 9563                      	INC		displayB
+0002fe 3066                      	CPI		displayB, MAX_displayB
+0002ff f531                      	BRNE	EXIT_TMR0_ISR
+000300 2766                      	CLR		displayB 
                                  
+000301 9573                      	INC		displayC
+000302 307a                      	CPI		displayC, MAX_displayC
+000303 f411                      	BRNE	check_24
+000304 2777                      	CLR		displayC 
                                  
-                                 
-0000af 9593                      	INC		COUNTER2
-                                 
-                                 
-                                 
-0000b0 339c                      	CPI		COUNTER2, 60
-0000b1 f4b9                      	BRNE	EXIT_TMR0_ISR
-0000b2 2799                      	CLR		COUNTER2
-0000b3 9553                      	INC		displayA
-0000b4 305a                      	CPI		displayA, MAX_displayA
-0000b5 f499                      	BRNE	EXIT_TMR0_ISR
-0000b6 2755                      	CLR		displayA
-                                 
-0000b7 9563                      	INC		displayB
-0000b8 3066                      	CPI		displayB, MAX_displayB
-0000b9 f479                      	BRNE	EXIT_TMR0_ISR
-0000ba 2766                      	CLR		displayB 
-                                 
-0000bb 9573                      	INC		displayC
-0000bc 307a                      	CPI		displayC, MAX_displayC
-0000bd f411                      	BRNE	check_24
-0000be 2777                      	CLR		displayC 
-                                 
-0000bf 9583                      	INC		displayD
+000305 9583                      	INC		displayD
                                  	
                                  check_24:
-0000c0 3082                      	CPI		displayD, 2
-0000c1 f439                      	BRNE	EXIT_TMR0_ISR
-0000c2 3074                      	CPI		displayC, 4
-0000c3 f429                      	BRNE	EXIT_TMR0_ISR
+000306 3082                      	CPI		displayD, 2
+000307 f4f1                      	BRNE	EXIT_TMR0_ISR
+000308 3074                      	CPI		displayC, 4
+000309 f4e1                      	BRNE	EXIT_TMR0_ISR
                                  	
-0000c4 2788                      	CLR     displayD
-0000c5 2777                          CLR     displayC
-0000c6 2766                          CLR     displayB
-0000c7 2755                          CLR     displayA
+00030a 2788                      	CLR     displayD
+00030b 2777                          CLR     displayC
+00030c 2766                          CLR     displayB
+00030d 2755                          CLR     displayA
+00030e 9453                      	INC		fechaA
+                                 	
+00030f 2d05                      	MOV		R16, fechaA
+000310 3002                      	CPI		R16, 2
+000311 f4a1                      	BRNE	EXIT_TMR0_ISR
+                                 	
+000312 2d06                      	MOV		R16, fechaB
+000313 3003                      	CPI		R16, 3
+000314 f489                      	BRNE	EXIT_TMR0_ISR
+                                 
+000315 9483                      	INC		fechaD
+000316 2455                      	CLR		fechaA
+000317 2466                      	CLR		fechaB
+                                 
+000318 2d08                      	MOV		R16, fechaD
+000319 3003                      	CPI		R16, 3
+00031a f459                      	BRNE	EXIT_TMR0_ISR
+                                 	
+00031b 2d07                      	MOV		R16, fechaC
+00031c 3001                      	CPI		R16, 1
+00031d f441                      	BRNE	EXIT_TMR0_ISR
                                  
                                  
-0000c8 c000                      	RJMP	EXIT_TMR0_ISR
+                                 //FELIZ AÑO NUEVO
+00031e e001                      	ldi		R16, 0x01
+00031f 2e80                      	MOV		fechaD, R16
+000320 2477                      	CLR		fechaC
+000321 2466                      	CLR		fechaB
+000322 e001                      	LDI		R16, 0x01
+000323 2e50                      	MOV		fechaA, R16
+000324 9a2d                      	SBI		PORTB, PB5
+                                 
+000325 c000                      	RJMP	EXIT_TMR0_ISR
                                  
                                  
                                  EXIT_TMR0_ISR:
-0000c9 910f                      	POP		R16
-0000ca bf0f                      	OUT		SREG, R16
-0000cb 910f                      	POP		R16
-0000cc 9518                      	RETI
+000326 910f                      	POP		R16
+000327 bf0f                      	OUT		SREG, R16
+000328 910f                      	POP		R16
+000329 9478                      	SEI
+00032a 9518                      	RETI
                                  	
-                                 INT_BOTONAZO:
+                                 
+                                 INT_BOTONAZOC:
+                                 
+00032b 930f                      	PUSH	R16
+00032c b70f                      	IN		R16,	SREG
+00032d 930f                      	PUSH	R16
+                                 
+00032e 982d                      	CBI     PORTB, PB5         ; Si al menos uno está presionado, apagar B5
+00032f b106                      	IN      R16, PINC         ; Leer el estado del puerto C
+000330 7200                      	ANDI    R16, 0b00100000   ; Filtrar solo C5
+000331 3000                      	CPI     R16, 0b00000000   ; Verificar si C5 está en 0 (presionado)
+000332 f429                      	BRNE    WAKWAKK           ; Si no está presionado, salta
+000333 9543                      	INC     MODE              ; Si está presionado, incrementa MODE
+                                 
                                  
                                  //Revisamos si pasamos la cantidad maxima de modos (setear a 0 si si)
-0000cd e009                      	LDI		R16, modos
-0000ce 1340                      	CPSE	MODE, R16
-0000cf c001                      	RJMP	PC+2
-0000d0 2744                      	CLR		MODE 
-0000d1 9518                      	RETI 
-0000d2 9518                      	RETI 
-                                 ;*************** TABLA DE BÚSQUEDA ***************
-                                 TABLE:
-0000d3 7940
-0000d4 3024
-0000d5 1219
-0000d6 7802
-0000d7 1000
-0000d8 0308
-0000d9 2146
+000334 e009                      	LDI		R16, modos
+000335 3049                      	CPI		MODE, modos
+000336 f008                      	BRLO	WAKWAKK
+000337 2744                      	CLR		MODE 
+                                 	// Que modo estamos
+                                 	WAKWAKK:                  ; Etiqueta de salto
+000338 910f                      	POP		R16
+000339 bf0f                      	OUT		SREG, R16
+00033a 910f                      	POP		R16
+00033b 9518                      	RETI 
+                                 
+                                 
 
 
 RESOURCE USE INFORMATION
@@ -1357,40 +2170,40 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :   0 z  :   4 r0 :   0 r1 :   4 r2 :   0 r3 :   0 r4 :   0 
-r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  54 r17:   0 r18:   4 r19:   9 r20:   6 
-r21:   6 r22:   6 r23:   7 r24:   5 r25:   4 r26:   0 r27:   0 r28:   0 
-r29:   0 r30:   8 r31:   8 
-Registers used: 13 out of 35 (37.1%)
+x  :   0 y  :   0 z  :  14 r0 :   1 r1 :  13 r2 :   0 r3 :   0 r4 :   0 
+r5 :  17 r6 :  15 r7 :  11 r8 :  15 r9 :   0 r10:  11 r11:   9 r12:  12 
+r13:   9 r14:   0 r15:  18 r16: 190 r17:   5 r18:   4 r19:  29 r20:  14 
+r21:  15 r22:  13 r23:  17 r24:  12 r25:   4 r26:  29 r27:   0 r28:   6 
+r29:   3 r30:  33 r31:  26 
+Registers used: 27 out of 35 (77.1%)
 
 "ATmega328P" instruction use summary:
-.lds  :   0 .sts  :   0 adc   :   4 add   :   4 adiw  :   0 and   :   0 
-andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   3 brge  :   0 brhc  :   0 
-brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   8 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   5 cbi   :  16 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   1 cln   :   0 clr   :  19 cls   :   0 
-clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :  11 cpse  :   1 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   7 jmp   :   3 
-ld    :   0 ldd   :   0 ldi   :  28 lds   :   0 lpm   :   8 lsl   :   0 
-lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  18 pop   :   2 
-push  :   2 rcall :   0 ret   :   5 reti  :   3 rjmp  :   6 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   5 sbic  :   0 sbis  :   0 
-sbiw  :   0 sbr   :   0 sbrc  :   1 sbrs  :   3 sec   :   0 seh   :   0 
-sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   7 
-sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 26 out of 113 (23.0%)
+.lds  :   0 .sts  :   0 adc   :  12 add   :  16 adiw  :   0 and   :   0 
+andi  :   4 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :  15 brge  :   0 brhc  :   0 
+brhs  :   0 brid  :   0 brie  :   0 brlo  :   2 brlt  :   0 brmi  :   0 
+brne  :  24 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :  53 cbi   :  62 cbr   :   0 
+clc   :   0 clh   :   0 cli   :   2 cln   :   0 clr   :  53 cls   :   0 
+clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   1 cpc   :   0 
+cpi   :  40 cpse  :  17 dec   :  13 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :  11 inc   :  22 jmp   :   3 
+ld    :   0 ldd   :   0 ldi   :  82 lds   :   0 lpm   :  28 lsl   :   8 
+lsr   :   0 mov   :  47 movw  :   0 mul   :   1 muls  :   0 mulsu :   0 
+neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  26 pop   :   7 
+push  :   7 rcall :   0 ret   :  49 reti  :   2 rjmp  :  43 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :  30 sbic  :   0 sbis  :   0 
+sbiw  :   0 sbr   :   0 sbrc  :  13 sbrs  :  36 sec   :   0 seh   :   0 
+sei   :   2 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
+sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   6 
+sub   :   0 subi  :   1 swap  :   0 tst   :   0 wdr   :   0 
+Instructions used: 34 out of 113 (30.1%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0001b6    366     16    382   32768   1.2%
-[.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
+[.cseg] 0x000000 0x000678   1572     28   1600   32768   4.9%
+[.dseg] 0x000100 0x000102      0      2      2    2048   0.1%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
 Assembly complete, 0 errors, 0 warnings

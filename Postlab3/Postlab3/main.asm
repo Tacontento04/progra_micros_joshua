@@ -67,7 +67,7 @@ CLI		// inabilitamos interrupciones
 
 // CONFIGURACION DE INTERRUPCIONES 
 	LDI		R16, (1 << PCINT1) | (1 << PCINT0) 
-	STS		PCMSK0, R16
+	STS		PCMSK1, R16
 	LDI		R16, (1 << PCIE0)
 	STS		PCICR, R16
 
