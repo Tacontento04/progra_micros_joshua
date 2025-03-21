@@ -14,6 +14,7 @@
 ;ENCABEZADO
 ;******************************************
 .include "M328PDEF.inc"
+//Definimos constantes
 .equ	T0VALUE = 100
 .equ	modos =		9
 .equ	MAX_displayA	=	10
@@ -21,35 +22,33 @@
 .equ	MAX_displayC	=	10
 .equ	MAX_displayD	=	3
 
-.def	MESES		=	R17
+//Definiciones de registros
+.def	MESES		=	R17		//registro meses
 .def	COUNTER		=	R19
 .def	COUNTER2	=	R25
 .def	COUNTER3	=	R18
-.def	MODE		=	R20
-.def	displayA	=	R21
-.def	displayB	=	R22
-.def	displayC	=	R23
-.def	displayD	=	R24
-.def	alarmaA		=	R10
-.def	alarmaB		=	R11
-.def	alarmaC		=	R12
-.def	alarmaD		=	R13
-.def	fechaA		=	R5
-.def	fechaB		=	R6
+.def	MODE		=	R20		// regristro de los modos
+.def	displayA	=	R21		//unidad de min
+.def	displayB	=	R22		//decena de min
+.def	displayC	=	R23		//unidad de hora
+.def	displayD	=	R24		//decena de hora
+.def	alarmaA		=	R10		//unidad de min 
+.def	alarmaB		=	R11		//decenaa de min
+.def	alarmaC		=	R12		// unidad de hora
+.def	alarmaD		=	R13		// decena de hora
+.def	fechaA		=	R5		//unidad de dia
+.def	fechaB		=	R6		//decena de dia
 .def	fechaC		=	R7		//decena del mes
 .def	fechaD		=	R8		//unidad del mes
 
-.DSEG	
-ESTADO_ANTERIORB1:	.BYTE 1
-ESTADO_ACTUALB1:	.BYTE 1
 
 .CSEG	
 .ORG	0x0000	
 	JMP START
-.ORG	PCI1addr
+.ORG	PCI1addr		//boton pin change PortC
 	JMP	INT_BOTONAZOC
-.ORG	OVF0addr
-	JMP	timer0_overflow
+.ORG	OVF0addr		//timer0 overflow
+	JMP	timer0_overflow	
 ;***************************************
 ; STACK POINTER
 ;****************************************
@@ -60,7 +59,7 @@ LDI R16, HIGH(RAMEND)
 OUT SPH, R16
 
 ;***********************************************
-;CONFIGURACION S
+;CONFIGURACIONS
 ;***********************************************
 SETUP:
 CLI		// inabilitamos interrupciones
@@ -133,7 +132,6 @@ CLI		// inabilitamos interrupciones
 	CLR		MESES
 	CLR		R28
  
-	// habilita interrupciones
 
 
 ;*************** TABLA DE BÚSQUEDA ***************
@@ -143,16 +141,17 @@ TABLE:
 dias_del_mes:  // mas 2 dias a todos los dias del mes por un bug del codigo
 	.DB	0x33, 0x30, 0x33, 0x32, 0x33, 0x32, 0x33, 0x33, 0x32, 0x33, 0x32, 0x33
 	// pero si te das cuenta si le restas 2 a cada uno da lo que deberia de ser 
+		
+		// habilita interrupciones
 		SEI
 
+
 void_loop:
-
-
-    CPI     MODE, 0
+    CPI     MODE, 0			//revisa si modo esta en el modo que se necesita
     BRNE    check1
-    RJMP    estado1
+    RJMP    estado1			// si si esta la variable nos metemos al modo 
 check1:
-    CPI     MODE, 1
+    CPI     MODE, 1			//misma logica para todo lo demas
     BRNE    check2
     RJMP    estado2
 check2:
@@ -203,7 +202,7 @@ check_alarm:
 	SBRC    R29, 0             ; Si el bit 0 de R29 es 1...
 	CALL    ALARMA             ; Llamar a la subrutina ALARMA
 
-	SBRC	COUNTER, 0
+	SBRC	COUNTER, 0			//multiplexeado 
 	CALL	DISPLAY_UPDATEA
 	SBRS	COUNTER, 0 
 	CALL	DISPLAY_UPDATEB
@@ -215,11 +214,11 @@ check_alarm:
 
 estado2: //configurar reloj normal (MINUTOS)
 	
-	SBI		PORTC, PC0
+	SBI		PORTC, PC0		//enseñamos que modo estamos
 	CBI		PORTC, PC1
 	CBI		PORTC, PC2
 
-	SBRC	COUNTER, 0
+	SBRC	COUNTER, 0		//multiplexeado
 	CALL	DISPLAY_UPDATEA
 	SBRS	COUNTER, 0 
 	CALL	DISPLAY_UPDATEB
@@ -245,10 +244,10 @@ RJMP	void_loop
 estado3: // configurar reloj normal (HORAS)
 
 	CBI		PORTC, PC0
-	SBI		PORTC, PC1
+	SBI		PORTC, PC1			//enseñamos modo
 	CBI		PORTC, PC2
 
-	SBRS	COUNTER, 0
+	SBRS	COUNTER, 0			//multiplexeado
 	CALL	DISPLAY_UPDATEC
 	SBRC	COUNTER, 0
 	CALL	DISPLAY_UPDATED
@@ -278,9 +277,9 @@ estado4:  // ENSEÑAR ALARMA
 	BREQ    no_alarma          ; Si ninguno está presionado, saltar
 	LDI     R29, 0x01          ; Si A3 o A4 están presionados, cargar 0x01 en R29
 
-no_alarma:
+no_alarma:				
 
-	SBRC	COUNTER, 0
+	SBRC	COUNTER, 0				//multiplexeado
 	CALL	DISPLAY_ALARMAA
 	SBRS	COUNTER, 0 
 	CALL	DISPLAY_ALARMAB
@@ -290,7 +289,7 @@ no_alarma:
 	CALL	DISPLAY_ALARMAD
 
 
-	SBI		PORTC, PC0
+	SBI		PORTC, PC0			//leds de modo
 	SBI		PORTC, PC1
 	CBI		PORTC, PC2
 
@@ -298,11 +297,11 @@ no_alarma:
 
 estado5: //	CONFIGURAR ALARMA AB (MINUTOS)
 
-	CBI		PORTC, PC0
+	CBI		PORTC, PC0			//leds de modo
 	CBI		PORTC, PC1
 	SBI		PORTC, PC2
-
-	SBRC	COUNTER, 0
+		
+	SBRC	COUNTER, 0		//multiplexeado
 	CALL	DISPLAY_ALARMAA
 	SBRS	COUNTER, 0 
 	CALL	DISPLAY_ALARMAB
@@ -326,11 +325,11 @@ estado5: //	CONFIGURAR ALARMA AB (MINUTOS)
 
 estado6: // CONFIGURAR ALARMA CD (HORAS)
 
-	SBI		PORTC, PC0
+	SBI		PORTC, PC0			// leds de modo
 	CBI		PORTC, PC1
 	SBI		PORTC, PC2
 
-	SBRC	COUNTER, 0
+	SBRC	COUNTER, 0			//multiplexado
 	CALL	DISPLAY_ALARMAC
 	SBRS	COUNTER, 0
 	CALL	DISPLAY_ALARMAD
@@ -355,9 +354,9 @@ estado6: // CONFIGURAR ALARMA CD (HORAS)
 estado7: //mostrar fecha
 	CBI		PORTC, PC0
 	SBI		PORTC, PC1
-	SBI		PORTC, PC2
+	SBI		PORTC, PC2			//leds de modo 
 
-	SBRC	COUNTER, 0
+	SBRC	COUNTER, 0			//multiplexado
 	CALL	DISPLAY_fechaA
 	SBRS	COUNTER, 0 
 	CALL	DISPLAY_fechaB
@@ -369,13 +368,13 @@ estado7: //mostrar fecha
 	
 
 	RJMP	void_loop
-estado8: // incrementar decrementar meses
+estado8: // incrementar/decrementar meses
 	SBI		PORTC, PC0
-	SBI		PORTC, PC1
+	SBI		PORTC, PC1			//leds de modo
 	SBI		PORTC, PC2
 	clr		R16
 
-	IN		R16, PINC		
+	IN		R16, PINC			//logica antirebotes
 	MOV		R26, R16		
 
 	
@@ -400,12 +399,12 @@ estado8: // incrementar decrementar meses
 estado9: //incrementar/ decrementar  dias
 
 	SBRC	COUNTER, 0
-	CALL	DISPLAY_fechaA
+	CALL	DISPLAY_fechaA			//multiplexado
 	SBRS	COUNTER, 0 
 	CALL	DISPLAY_fechaB
 	CLR		R16
 
-	IN		R16, PINC		
+	IN		R16, PINC				//anitrrebotes
 	MOV		R26, R16		
 
 	
@@ -449,7 +448,7 @@ INIT_PORTC:
 	RET
 
 ALARMA:
-	CPSE	displayA, alarmaA
+	CPSE	displayA, alarmaA		//revisamos si las variables de alrama son iguales que hora
 	RET	
 	CPSE	displayB, alarmaB
 	RET	
@@ -457,7 +456,7 @@ ALARMA:
 	RET	
 	CPSE	displayD, alarmaD
 	RET
-	SBI		PORTB, PB5
+	SBI		PORTB, PB5 //BUZZER
 	RET
 
 DISPLAY_UPDATEA:
@@ -633,49 +632,47 @@ DISPLAY_FECHAD:
     RET
 
 //aumento y decremento PARA A Y B
-aumento:
 
-
-
+aumento:			
 	INC		DISPLAYA
-	LDI		R16, 0x0B
+	LDI		R16, 0x0B		//revisamos si llega a 11 para hacer el salto
 	CPSE	DISPLAYA, R16
 	RJMP	SEGUIR1
-	CALL	RESET
+	CALL	RESET			// si llego a 11 nos vamos a reset
 SEGUIR1:
-	LDI		R16, 0x06
+	LDI		R16, 0x06			//revisamos si decenas llega a 6
 	CPSE	DISPLAYB, R16
 	RJMP	SEGUIR2
-	CALL	RESET2
+	CALL	RESET2		//reseteamos
 SEGUIR2: 
 	RET
 	
 RESET:
-	CLR		DISPLAYA
-	INC		DISPLAYB
+	CLR		DISPLAYA		// reseteamos a 0 unidades de min 
+	INC		DISPLAYB		//incrementamos en uno decenas de min 
 
 	RJMP	estado2
 
 RESET2:
-	CLR		DISPLAYA
+	CLR		DISPLAYA		// paso de 59 a 60 por lo que 00 
 	CLR		DISPLAYB
 	RJMP	estado2
 
-decremento:	
-	DEC		DISPLAYA				
-	CPI		DISPLAYA, 0xFF			
-	BREQ	DECDB					
+decremento:			//logica para decrementar
+	DEC		DISPLAYA						
+	CPI		DISPLAYA, 0xFF	//revisamos si hizo underflow		
+	BREQ	DECDB			// si de 00 paso a FF nos vmaos aqui		
 	RET								
 
 DECDB:
-	LDI		DISPLAYA, 0x09			
+	LDI		DISPLAYA, 0x09		//reseteamos a 9 las unidades de min
 	DEC		DISPLAYB				
-	CPI		DISPLAYB, 0xFF			
-	BREQ	MAXEO_59				
+	CPI		DISPLAYB, 0xFF		// si displayB hizo underflow 
+	BREQ	MAXEO_59				// nos vamos a cargar 59
 	RET								
 
 MAXEO_59:
-	LDI		DISPLAYA, 0x09			
+	LDI		DISPLAYA, 0x09			//reiniciamos a 59
 	LDI		DISPLAYB, 0x05			
 	RET
 
@@ -683,47 +680,47 @@ MAXEO_59:
 
 //aumento y decremento PARA d y C
 
-aumento2:
+aumento2:				
 	INC		DISPLAYC
-	LDI		R16, 0x0B
-	CPSE	DISPLAYC, R16
-	RJMP	SEGUIR3
-	CALL	RESETCD
+	LDI		R16, 0x0B			//comparamos si ya llego a 11
+	CPSE	DISPLAYC, R16		
+	RJMP	SEGUIR3	
+	CALL	RESETCD				//si ya llego nos metemos aqui
 SEGUIR3:
-	LDI		R16, 0x02
-	CPSE	DISPLAYD, R16
+	LDI		R16, 0x02			
+	CPSE	DISPLAYD, R16		// comparamos si estamos en 20
 	RJMP	SEGUIR4
-	CALL	chekeo_24
+	CALL	chekeo_24			//si estamos en 20 tenemos que revisar si llego a 24
 SEGUIR4: 
 	RET
 chekeo_24:
-	LDI		R16, 0x05
-	CPSE	DISPLAYC, R16
+	LDI		R16, 0x05				
+	CPSE	DISPLAYC, R16		//comparamos si es 25
 	RJMP	SEGUIR5
-	CALL	RESET2CD
+	CALL	RESET2CD			//reseteamos
 SEGUIR5:
 	RET
 
 RESETCD:
-	CLR		DISPLAYC
-	INC		DISPLAYD
+	CLR		DISPLAYC		//limpiamos unidades de hora
+	INC		DISPLAYD		//incrementamos decenas de hora
 	RJMP	void_loop
 
 RESET2CD:
-	CLR		DISPLAYC
+	CLR		DISPLAYC			//clear de todo 
 	CLR		DISPLAYD
 	RJMP	void_loop	
-decremento2:	
-	DEC		DISPLAYC				
-	CPI		DISPLAYC, 0xFF			
+decremento2:			//logica para decrementar
+	DEC		DISPLAYC			// decrementamos decenas de hora	
+	CPI		DISPLAYC, 0xFF			//miramos si hizo underflow
 	BREQ	decrement_CD			
 	RET								
 
-decrement_CD:
+decrement_CD:				// si hizo underflow tenemos que cargarle 9
 	LDI		DISPLAYC, 0x09			
 	DEC		DISPLAYD				
-	CPI		DISPLAYD, 0xFF			
-	BREQ	MAXEO_23				
+	CPI		DISPLAYD, 0xFF		// si el registro de decenas de hora hizo under	
+	BREQ	MAXEO_23			// lo seteamos en 24
 	RET								
 
 MAXEO_23:
@@ -732,7 +729,7 @@ MAXEO_23:
 	RET
 
 // Aumento y decremento de la alarma A Y B (MInutos)
-aumento3:
+aumento3:		//misma logica que arriba
 	INC		alarmaA
 	LDI		R16, 0x0B
 	CPSE	alarmaA, R16
@@ -781,7 +778,7 @@ MAXEOA_59:
 	RET
 
 // Aumento y decremento de la alarma C y D (HORAS)
-aumento4:
+aumento4:			//misma logica que arriba
 	INC		alarmaC
 	LDI		R16, 0x0B
 	CPSE	alarmaC, R16
@@ -991,40 +988,40 @@ timer0_overflow:
 	PUSH	R16
 
 	
-	LDI		R16, T0VALUE
+	LDI		R16, T0VALUE		// 100
 	OUT		TCNT0,	R16
 	
 	INC		COUNTER
 	INC		COUNTER3
 
 
-	CPI		COUNTER3, 50
+	CPI		COUNTER3, 50		// 50 * 10ms = 500ms
 	BRNE	EXIT_TMR0_ISR
 	CLR		COUNTER3		
 
     SBI		PINB, 4 ; Alternar el estado del pin D7
 
-	CPI		COUNTER, 100
+	CPI		COUNTER, 100		// 10* 10ms = 1000ms
 	BRNE	EXIT_TMR0_ISR
 	CLR		COUNTER		
 
 	INC		COUNTER2
 
-	CPI		COUNTER2, 60
+	CPI		COUNTER2, 60		// 60*1000ms = 1min
 	BRNE	EXIT_TMR0_ISR
 	CLR		COUNTER2
 	INC		displayA
-	CPI		displayA, MAX_displayA
+	CPI		displayA, MAX_displayA //comparamos con el valor maximo deA
 	BRNE	EXIT_TMR0_ISR
 	CLR		displayA
 
 	INC		displayB
-	CPI		displayB, MAX_displayB
+	CPI		displayB, MAX_displayB		//valor maximo de B
 	BRNE	EXIT_TMR0_ISR
 	CLR		displayB 
 
 	INC		displayC
-	CPI		displayC, MAX_displayC
+	CPI		displayC, MAX_displayC		//valor maximo de C
 	BRNE	check_24
 	CLR		displayC 
 
@@ -1064,13 +1061,13 @@ check_24:
 
 
 //FELIZ AÑO NUEVO
-	ldi		R16, 0x01
+	ldi		R16, 0x01		// si todo es 00 entonces es un nuevo año 
 	MOV		fechaD, R16
 	CLR		fechaC
 	CLR		fechaB
 	LDI		R16, 0x01
 	MOV		fechaA, R16
-	SBI		PORTB, PB5
+	SBI		PORTB, PB5		//encendemos la alarma
 
 	RJMP	EXIT_TMR0_ISR
 
@@ -1093,17 +1090,17 @@ INT_BOTONAZOC:
 	IN      R16, PINC         ; Leer el estado del puerto C
 	ANDI    R16, 0b00100000   ; Filtrar solo C5
 	CPI     R16, 0b00000000   ; Verificar si C5 está en 0 (presionado)
-	BRNE    WAKWAKK           ; Si no está presionado, salta
+	BRNE    salidita           ; Si no está presionado, salta
 	INC     MODE              ; Si está presionado, incrementa MODE
 
 
 //Revisamos si pasamos la cantidad maxima de modos (setear a 0 si si)
 	LDI		R16, modos
 	CPI		MODE, modos
-	BRLO	WAKWAKK
+	BRLO	salidita
 	CLR		MODE 
 	// Que modo estamos
-	WAKWAKK:                  ; Etiqueta de salto
+	salidita:                  ; Etiqueta de salto
 	POP		R16
 	OUT		SREG, R16
 	POP		R16

@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm Fri Mar 21 05:26:07 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm Fri Mar 21 13:54:31 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -718,8 +718,6 @@ DEF  fechaA       r5
 DEF  fechaB       r6
 DEF  fechaC       r7
 DEF  fechaD       r8
-DSEG ESTADO_ANTERIORB1 00000100
-DSEG ESTADO_ACTUALB1 00000101
 CSEG START        00000022
 CSEG INT_BOTONAZOC 0000032b
 CSEG timer0_overflow 000002e6
@@ -818,4 +816,4 @@ CSEG decrementA_CDM 000002da
 CSEG MAXEO_12     000002e1
 CSEG EXIT_TMR0_ISR 00000326
 CSEG check_24     00000306
-CSEG WAKWAKK      00000338
+CSEG salidita     00000338

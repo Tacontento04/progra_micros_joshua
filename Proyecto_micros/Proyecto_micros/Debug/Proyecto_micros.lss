@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm Fri Mar 21 05:26:07 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm Fri Mar 21 13:54:31 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\M328PDEF.inc'
@@ -1045,6 +1045,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  #endif  /* _M328PDEF_INC_ */
                                  
                                  ; ***** END OF FILE ******************************************************
+                                 //Definimos constantes
                                  .equ	T0VALUE = 100
                                  .equ	modos =		9
                                  .equ	MAX_displayA	=	10
@@ -1052,35 +1053,33 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  .equ	MAX_displayC	=	10
                                  .equ	MAX_displayD	=	3
                                  
-                                 .def	MESES		=	R17
+                                 //Definiciones de registros
+                                 .def	MESES		=	R17		//registro meses
                                  .def	COUNTER		=	R19
                                  .def	COUNTER2	=	R25
                                  .def	COUNTER3	=	R18
-                                 .def	MODE		=	R20
-                                 .def	displayA	=	R21
-                                 .def	displayB	=	R22
-                                 .def	displayC	=	R23
-                                 .def	displayD	=	R24
-                                 .def	alarmaA		=	R10
-                                 .def	alarmaB		=	R11
-                                 .def	alarmaC		=	R12
-                                 .def	alarmaD		=	R13
-                                 .def	fechaA		=	R5
-                                 .def	fechaB		=	R6
+                                 .def	MODE		=	R20		// regristro de los modos
+                                 .def	displayA	=	R21		//unidad de min
+                                 .def	displayB	=	R22		//decena de min
+                                 .def	displayC	=	R23		//unidad de hora
+                                 .def	displayD	=	R24		//decena de hora
+                                 .def	alarmaA		=	R10		//unidad de min 
+                                 .def	alarmaB		=	R11		//decenaa de min
+                                 .def	alarmaC		=	R12		// unidad de hora
+                                 .def	alarmaD		=	R13		// decena de hora
+                                 .def	fechaA		=	R5		//unidad de dia
+                                 .def	fechaB		=	R6		//decena de dia
                                  .def	fechaC		=	R7		//decena del mes
                                  .def	fechaD		=	R8		//unidad del mes
                                  
-                                 .DSEG	
-000100                           ESTADO_ANTERIORB1:	.BYTE 1
-000101                           ESTADO_ACTUALB1:	.BYTE 1
                                  
                                  .CSEG	
                                  .ORG	0x0000	
 000000 940c 0022                 	JMP START
-                                 .ORG	PCI1addr
+                                 .ORG	PCI1addr		//boton pin change PortC
 000008 940c 032b                 	JMP	INT_BOTONAZOC
-                                 .ORG	OVF0addr
-000020 940c 02e6                 	JMP	timer0_overflow
+                                 .ORG	OVF0addr		//timer0 overflow
+000020 940c 02e6                 	JMP	timer0_overflow	
                                  ;***************************************
                                  ; STACK POINTER
                                  ;****************************************
@@ -1091,7 +1090,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 000025 bf0e                      OUT SPH, R16
                                  
                                  ;***********************************************
-                                 ;CONFIGURACION S
+                                 ;CONFIGURACIONS
                                  ;***********************************************
                                  SETUP:
 000026 94f8                      CLI		// inabilitamos interrupciones
@@ -1164,7 +1163,6 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 000056 2711                      	CLR		MESES
 000057 27cc                      	CLR		R28
                                   
-                                 	// habilita interrupciones
                                  
                                  
                                  ;*************** TABLA DE BÚSQUEDA ***************
@@ -1186,16 +1184,17 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 000064 3332
 000065 3332                      	.DB	0x33, 0x30, 0x33, 0x32, 0x33, 0x32, 0x33, 0x33, 0x32, 0x33, 0x32, 0x33
                                  	// pero si te das cuenta si le restas 2 a cada uno da lo que deberia de ser 
+                                 		
+                                 		// habilita interrupciones
 000066 9478                      		SEI
                                  
+                                 
                                  void_loop:
-                                 
-                                 
-000067 3040                          CPI     MODE, 0
+000067 3040                          CPI     MODE, 0			//revisa si modo esta en el modo que se necesita
 000068 f409                          BRNE    check1
-000069 c019                          RJMP    estado1
+000069 c019                          RJMP    estado1			// si si esta la variable nos metemos al modo 
                                  check1:
-00006a 3041                          CPI     MODE, 1
+00006a 3041                          CPI     MODE, 1			//misma logica para todo lo demas
 00006b f409                          BRNE    check2
 00006c c02e                          RJMP    estado2
                                  check2:
@@ -1246,7 +1245,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 00008b fdd0                      	SBRC    R29, 0             ; Si el bit 0 de R29 es 1...
 00008c 940e 0150                 	CALL    ALARMA             ; Llamar a la subrutina ALARMA
                                  
-00008e fd30                      	SBRC	COUNTER, 0
+00008e fd30                      	SBRC	COUNTER, 0			//multiplexeado 
 00008f 940e 015a                 	CALL	DISPLAY_UPDATEA
 000091 ff30                      	SBRS	COUNTER, 0 
 000092 940e 0166                 	CALL	DISPLAY_UPDATEB
@@ -1258,11 +1257,11 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  
                                  estado2: //configurar reloj normal (MINUTOS)
                                  	
-00009b 9a40                      	SBI		PORTC, PC0
+00009b 9a40                      	SBI		PORTC, PC0		//enseñamos que modo estamos
 00009c 9841                      	CBI		PORTC, PC1
 00009d 9842                      	CBI		PORTC, PC2
                                  
-00009e fd30                      	SBRC	COUNTER, 0
+00009e fd30                      	SBRC	COUNTER, 0		//multiplexeado
 00009f 940e 015a                 	CALL	DISPLAY_UPDATEA
 0000a1 ff30                      	SBRS	COUNTER, 0 
 0000a2 940e 0166                 	CALL	DISPLAY_UPDATEB
@@ -1288,10 +1287,10 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  estado3: // configurar reloj normal (HORAS)
                                  
 0000b0 9840                      	CBI		PORTC, PC0
-0000b1 9a41                      	SBI		PORTC, PC1
+0000b1 9a41                      	SBI		PORTC, PC1			//enseñamos modo
 0000b2 9842                      	CBI		PORTC, PC2
                                  
-0000b3 ff30                      	SBRS	COUNTER, 0
+0000b3 ff30                      	SBRS	COUNTER, 0			//multiplexeado
 0000b4 940e 0172                 	CALL	DISPLAY_UPDATEC
 0000b6 fd30                      	SBRC	COUNTER, 0
 0000b7 940e 017e                 	CALL	DISPLAY_UPDATED
@@ -1321,9 +1320,9 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 0000c8 f009                      	BREQ    no_alarma          ; Si ninguno está presionado, saltar
 0000c9 e0d1                      	LDI     R29, 0x01          ; Si A3 o A4 están presionados, cargar 0x01 en R29
                                  
-                                 no_alarma:
+                                 no_alarma:				
                                  
-0000ca fd30                      	SBRC	COUNTER, 0
+0000ca fd30                      	SBRC	COUNTER, 0				//multiplexeado
 0000cb 940e 018a                 	CALL	DISPLAY_ALARMAA
 0000cd ff30                      	SBRS	COUNTER, 0 
 0000ce 940e 0196                 	CALL	DISPLAY_ALARMAB
@@ -1333,7 +1332,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 0000d4 940e 01ae                 	CALL	DISPLAY_ALARMAD
                                  
                                  
-0000d6 9a40                      	SBI		PORTC, PC0
+0000d6 9a40                      	SBI		PORTC, PC0			//leds de modo
 0000d7 9a41                      	SBI		PORTC, PC1
 0000d8 9842                      	CBI		PORTC, PC2
                                  
@@ -1341,11 +1340,11 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  
                                  estado5: //	CONFIGURAR ALARMA AB (MINUTOS)
                                  
-0000da 9840                      	CBI		PORTC, PC0
+0000da 9840                      	CBI		PORTC, PC0			//leds de modo
 0000db 9841                      	CBI		PORTC, PC1
 0000dc 9a42                      	SBI		PORTC, PC2
-                                 
-0000dd fd30                      	SBRC	COUNTER, 0
+                                 		
+0000dd fd30                      	SBRC	COUNTER, 0		//multiplexeado
 0000de 940e 018a                 	CALL	DISPLAY_ALARMAA
 0000e0 ff30                      	SBRS	COUNTER, 0 
 0000e1 940e 0196                 	CALL	DISPLAY_ALARMAB
@@ -1369,11 +1368,11 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  
                                  estado6: // CONFIGURAR ALARMA CD (HORAS)
                                  
-0000ef 9a40                      	SBI		PORTC, PC0
+0000ef 9a40                      	SBI		PORTC, PC0			// leds de modo
 0000f0 9841                      	CBI		PORTC, PC1
 0000f1 9a42                      	SBI		PORTC, PC2
                                  
-0000f2 fd30                      	SBRC	COUNTER, 0
+0000f2 fd30                      	SBRC	COUNTER, 0			//multiplexado
 0000f3 940e 01a2                 	CALL	DISPLAY_ALARMAC
 0000f5 ff30                      	SBRS	COUNTER, 0
 0000f6 940e 01ae                 	CALL	DISPLAY_ALARMAD
@@ -1398,9 +1397,9 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  estado7: //mostrar fecha
 000104 9840                      	CBI		PORTC, PC0
 000105 9a41                      	SBI		PORTC, PC1
-000106 9a42                      	SBI		PORTC, PC2
+000106 9a42                      	SBI		PORTC, PC2			//leds de modo 
                                  
-000107 fd30                      	SBRC	COUNTER, 0
+000107 fd30                      	SBRC	COUNTER, 0			//multiplexado
 000108 940e 01ba                 	CALL	DISPLAY_fechaA
 00010a ff30                      	SBRS	COUNTER, 0 
 00010b 940e 01c6                 	CALL	DISPLAY_fechaB
@@ -1412,13 +1411,13 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  	
                                  
 000113 cf53                      	RJMP	void_loop
-                                 estado8: // incrementar decrementar meses
+                                 estado8: // incrementar/decrementar meses
 000114 9a40                      	SBI		PORTC, PC0
-000115 9a41                      	SBI		PORTC, PC1
+000115 9a41                      	SBI		PORTC, PC1			//leds de modo
 000116 9a42                      	SBI		PORTC, PC2
 000117 2700                      	clr		R16
                                  
-000118 b106                      	IN		R16, PINC		
+000118 b106                      	IN		R16, PINC			//logica antirebotes
 000119 2fa0                      	MOV		R26, R16		
                                  
                                  	
@@ -1443,12 +1442,12 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  estado9: //incrementar/ decrementar  dias
                                  
 00012a fd30                      	SBRC	COUNTER, 0
-00012b 940e 01ba                 	CALL	DISPLAY_fechaA
+00012b 940e 01ba                 	CALL	DISPLAY_fechaA			//multiplexado
 00012d ff30                      	SBRS	COUNTER, 0 
 00012e 940e 01c6                 	CALL	DISPLAY_fechaB
 000130 2700                      	CLR		R16
                                  
-000131 b106                      	IN		R16, PINC		
+000131 b106                      	IN		R16, PINC				//anitrrebotes
 000132 2fa0                      	MOV		R26, R16		
                                  
                                  	
@@ -1492,7 +1491,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 00014f 9508                      	RET
                                  
                                  ALARMA:
-000150 115a                      	CPSE	displayA, alarmaA
+000150 115a                      	CPSE	displayA, alarmaA		//revisamos si las variables de alrama son iguales que hora
 000151 9508                      	RET	
 000152 116b                      	CPSE	displayB, alarmaB
 000153 9508                      	RET	
@@ -1500,7 +1499,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 000155 9508                      	RET	
 000156 118d                      	CPSE	displayD, alarmaD
 000157 9508                      	RET
-000158 9a2d                      	SBI		PORTB, PB5
+000158 9a2d                      	SBI		PORTB, PB5 //BUZZER
 000159 9508                      	RET
                                  
                                  DISPLAY_UPDATEA:
@@ -1676,49 +1675,47 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 0001e9 9508                          RET
                                  
                                  //aumento y decremento PARA A Y B
-                                 aumento:
                                  
-                                 
-                                 
+                                 aumento:			
 0001ea 9553                      	INC		DISPLAYA
-0001eb e00b                      	LDI		R16, 0x0B
+0001eb e00b                      	LDI		R16, 0x0B		//revisamos si llega a 11 para hacer el salto
 0001ec 1350                      	CPSE	DISPLAYA, R16
 0001ed c002                      	RJMP	SEGUIR1
-0001ee 940e 01f6                 	CALL	RESET
+0001ee 940e 01f6                 	CALL	RESET			// si llego a 11 nos vamos a reset
                                  SEGUIR1:
-0001f0 e006                      	LDI		R16, 0x06
+0001f0 e006                      	LDI		R16, 0x06			//revisamos si decenas llega a 6
 0001f1 1360                      	CPSE	DISPLAYB, R16
 0001f2 c002                      	RJMP	SEGUIR2
-0001f3 940e 01f9                 	CALL	RESET2
+0001f3 940e 01f9                 	CALL	RESET2		//reseteamos
                                  SEGUIR2: 
 0001f5 9508                      	RET
                                  	
                                  RESET:
-0001f6 2755                      	CLR		DISPLAYA
-0001f7 9563                      	INC		DISPLAYB
+0001f6 2755                      	CLR		DISPLAYA		// reseteamos a 0 unidades de min 
+0001f7 9563                      	INC		DISPLAYB		//incrementamos en uno decenas de min 
                                  
 0001f8 cea2                      	RJMP	estado2
                                  
                                  RESET2:
-0001f9 2755                      	CLR		DISPLAYA
+0001f9 2755                      	CLR		DISPLAYA		// paso de 59 a 60 por lo que 00 
 0001fa 2766                      	CLR		DISPLAYB
 0001fb ce9f                      	RJMP	estado2
                                  
-                                 decremento:	
-0001fc 955a                      	DEC		DISPLAYA				
-0001fd 3f5f                      	CPI		DISPLAYA, 0xFF			
-0001fe f009                      	BREQ	DECDB					
+                                 decremento:			//logica para decrementar
+0001fc 955a                      	DEC		DISPLAYA						
+0001fd 3f5f                      	CPI		DISPLAYA, 0xFF	//revisamos si hizo underflow		
+0001fe f009                      	BREQ	DECDB			// si de 00 paso a FF nos vmaos aqui		
 0001ff 9508                      	RET								
                                  
                                  DECDB:
-000200 e059                      	LDI		DISPLAYA, 0x09			
+000200 e059                      	LDI		DISPLAYA, 0x09		//reseteamos a 9 las unidades de min
 000201 956a                      	DEC		DISPLAYB				
-000202 3f6f                      	CPI		DISPLAYB, 0xFF			
-000203 f009                      	BREQ	MAXEO_59				
+000202 3f6f                      	CPI		DISPLAYB, 0xFF		// si displayB hizo underflow 
+000203 f009                      	BREQ	MAXEO_59				// nos vamos a cargar 59
 000204 9508                      	RET								
                                  
                                  MAXEO_59:
-000205 e059                      	LDI		DISPLAYA, 0x09			
+000205 e059                      	LDI		DISPLAYA, 0x09			//reiniciamos a 59
 000206 e065                      	LDI		DISPLAYB, 0x05			
 000207 9508                      	RET
                                  
@@ -1726,47 +1723,47 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  
                                  //aumento y decremento PARA d y C
                                  
-                                 aumento2:
+                                 aumento2:				
 000208 9573                      	INC		DISPLAYC
-000209 e00b                      	LDI		R16, 0x0B
-00020a 1370                      	CPSE	DISPLAYC, R16
-00020b c002                      	RJMP	SEGUIR3
-00020c 940e 021a                 	CALL	RESETCD
+000209 e00b                      	LDI		R16, 0x0B			//comparamos si ya llego a 11
+00020a 1370                      	CPSE	DISPLAYC, R16		
+00020b c002                      	RJMP	SEGUIR3	
+00020c 940e 021a                 	CALL	RESETCD				//si ya llego nos metemos aqui
                                  SEGUIR3:
-00020e e002                      	LDI		R16, 0x02
-00020f 1380                      	CPSE	DISPLAYD, R16
+00020e e002                      	LDI		R16, 0x02			
+00020f 1380                      	CPSE	DISPLAYD, R16		// comparamos si estamos en 20
 000210 c002                      	RJMP	SEGUIR4
-000211 940e 0214                 	CALL	chekeo_24
+000211 940e 0214                 	CALL	chekeo_24			//si estamos en 20 tenemos que revisar si llego a 24
                                  SEGUIR4: 
 000213 9508                      	RET
                                  chekeo_24:
-000214 e005                      	LDI		R16, 0x05
-000215 1370                      	CPSE	DISPLAYC, R16
+000214 e005                      	LDI		R16, 0x05				
+000215 1370                      	CPSE	DISPLAYC, R16		//comparamos si es 25
 000216 c002                      	RJMP	SEGUIR5
-000217 940e 021d                 	CALL	RESET2CD
+000217 940e 021d                 	CALL	RESET2CD			//reseteamos
                                  SEGUIR5:
 000219 9508                      	RET
                                  
                                  RESETCD:
-00021a 2777                      	CLR		DISPLAYC
-00021b 9583                      	INC		DISPLAYD
+00021a 2777                      	CLR		DISPLAYC		//limpiamos unidades de hora
+00021b 9583                      	INC		DISPLAYD		//incrementamos decenas de hora
 00021c ce4a                      	RJMP	void_loop
                                  
                                  RESET2CD:
-00021d 2777                      	CLR		DISPLAYC
+00021d 2777                      	CLR		DISPLAYC			//clear de todo 
 00021e 2788                      	CLR		DISPLAYD
 00021f ce47                      	RJMP	void_loop	
-                                 decremento2:	
-000220 957a                      	DEC		DISPLAYC				
-000221 3f7f                      	CPI		DISPLAYC, 0xFF			
+                                 decremento2:			//logica para decrementar
+000220 957a                      	DEC		DISPLAYC			// decrementamos decenas de hora	
+000221 3f7f                      	CPI		DISPLAYC, 0xFF			//miramos si hizo underflow
 000222 f009                      	BREQ	decrement_CD			
 000223 9508                      	RET								
                                  
-                                 decrement_CD:
+                                 decrement_CD:				// si hizo underflow tenemos que cargarle 9
 000224 e079                      	LDI		DISPLAYC, 0x09			
 000225 958a                      	DEC		DISPLAYD				
-000226 3f8f                      	CPI		DISPLAYD, 0xFF			
-000227 f009                      	BREQ	MAXEO_23				
+000226 3f8f                      	CPI		DISPLAYD, 0xFF		// si el registro de decenas de hora hizo under	
+000227 f009                      	BREQ	MAXEO_23			// lo seteamos en 24
 000228 9508                      	RET								
                                  
                                  MAXEO_23:
@@ -1775,7 +1772,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 00022b 9508                      	RET
                                  
                                  // Aumento y decremento de la alarma A Y B (MInutos)
-                                 aumento3:
+                                 aumento3:		//misma logica que arriba
 00022c 94a3                      	INC		alarmaA
 00022d e00b                      	LDI		R16, 0x0B
 00022e 12a0                      	CPSE	alarmaA, R16
@@ -1824,7 +1821,7 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 00024e 9508                      	RET
                                  
                                  // Aumento y decremento de la alarma C y D (HORAS)
-                                 aumento4:
+                                 aumento4:			//misma logica que arriba
 00024f 94c3                      	INC		alarmaC
 000250 e00b                      	LDI		R16, 0x0B
 000251 12c0                      	CPSE	alarmaC, R16
@@ -2034,40 +2031,40 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 0002e9 930f                      	PUSH	R16
                                  
                                  	
-0002ea e604                      	LDI		R16, T0VALUE
+0002ea e604                      	LDI		R16, T0VALUE		// 100
 0002eb bd06                      	OUT		TCNT0,	R16
                                  	
 0002ec 9533                      	INC		COUNTER
 0002ed 9523                      	INC		COUNTER3
                                  
                                  
-0002ee 3322                      	CPI		COUNTER3, 50
+0002ee 3322                      	CPI		COUNTER3, 50		// 50 * 10ms = 500ms
 0002ef f5b1                      	BRNE	EXIT_TMR0_ISR
 0002f0 2722                      	CLR		COUNTER3		
                                  
 0002f1 9a1c                          SBI		PINB, 4 ; Alternar el estado del pin D7
                                  
-0002f2 3634                      	CPI		COUNTER, 100
+0002f2 3634                      	CPI		COUNTER, 100		// 10* 10ms = 1000ms
 0002f3 f591                      	BRNE	EXIT_TMR0_ISR
 0002f4 2733                      	CLR		COUNTER		
                                  
 0002f5 9593                      	INC		COUNTER2
                                  
-0002f6 339c                      	CPI		COUNTER2, 60
+0002f6 339c                      	CPI		COUNTER2, 60		// 60*1000ms = 1min
 0002f7 f571                      	BRNE	EXIT_TMR0_ISR
 0002f8 2799                      	CLR		COUNTER2
 0002f9 9553                      	INC		displayA
-0002fa 305a                      	CPI		displayA, MAX_displayA
+0002fa 305a                      	CPI		displayA, MAX_displayA //comparamos con el valor maximo deA
 0002fb f551                      	BRNE	EXIT_TMR0_ISR
 0002fc 2755                      	CLR		displayA
                                  
 0002fd 9563                      	INC		displayB
-0002fe 3066                      	CPI		displayB, MAX_displayB
+0002fe 3066                      	CPI		displayB, MAX_displayB		//valor maximo de B
 0002ff f531                      	BRNE	EXIT_TMR0_ISR
 000300 2766                      	CLR		displayB 
                                  
 000301 9573                      	INC		displayC
-000302 307a                      	CPI		displayC, MAX_displayC
+000302 307a                      	CPI		displayC, MAX_displayC		//valor maximo de C
 000303 f411                      	BRNE	check_24
 000304 2777                      	CLR		displayC 
                                  
@@ -2107,13 +2104,13 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
                                  
                                  
                                  //FELIZ AÑO NUEVO
-00031e e001                      	ldi		R16, 0x01
+00031e e001                      	ldi		R16, 0x01		// si todo es 00 entonces es un nuevo año 
 00031f 2e80                      	MOV		fechaD, R16
 000320 2477                      	CLR		fechaC
 000321 2466                      	CLR		fechaB
 000322 e001                      	LDI		R16, 0x01
 000323 2e50                      	MOV		fechaA, R16
-000324 9a2d                      	SBI		PORTB, PB5
+000324 9a2d                      	SBI		PORTB, PB5		//encendemos la alarma
                                  
 000325 c000                      	RJMP	EXIT_TMR0_ISR
                                  
@@ -2136,17 +2133,17 @@ C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\p
 00032f b106                      	IN      R16, PINC         ; Leer el estado del puerto C
 000330 7200                      	ANDI    R16, 0b00100000   ; Filtrar solo C5
 000331 3000                      	CPI     R16, 0b00000000   ; Verificar si C5 está en 0 (presionado)
-000332 f429                      	BRNE    WAKWAKK           ; Si no está presionado, salta
+000332 f429                      	BRNE    salidita           ; Si no está presionado, salta
 000333 9543                      	INC     MODE              ; Si está presionado, incrementa MODE
                                  
                                  
                                  //Revisamos si pasamos la cantidad maxima de modos (setear a 0 si si)
 000334 e009                      	LDI		R16, modos
 000335 3049                      	CPI		MODE, modos
-000336 f008                      	BRLO	WAKWAKK
+000336 f008                      	BRLO	salidita
 000337 2744                      	CLR		MODE 
                                  	// Que modo estamos
-                                 	WAKWAKK:                  ; Etiqueta de salto
+                                 	salidita:                  ; Etiqueta de salto
 000338 910f                      	POP		R16
 000339 bf0f                      	OUT		SREG, R16
 00033a 910f                      	POP		R16
@@ -2203,7 +2200,7 @@ Instructions used: 34 out of 113 (30.1%)
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
 [.cseg] 0x000000 0x000678   1572     28   1600   32768   4.9%
-[.dseg] 0x000100 0x000102      0      2      2    2048   0.1%
+[.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
 Assembly complete, 0 errors, 0 warnings
