@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm Fri Mar 21 17:26:54 2025
+AVRASM ver. 2.2.8  C:\Users\joshu\OneDrive - Universidad del Valle de Guatemala\Documentos\GitHub\progra_micros_joshua\Proyecto_micros\Proyecto_micros\main.asm Fri Mar 21 13:54:31 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -719,8 +719,8 @@ DEF  fechaB       r6
 DEF  fechaC       r7
 DEF  fechaD       r8
 CSEG START        00000022
-CSEG INT_BOTONAZOC 0000032d
-CSEG timer0_overflow 000002e8
+CSEG INT_BOTONAZOC 0000032b
+CSEG timer0_overflow 000002e6
 CSEG SETUP        00000026
 CSEG INIT_TMR0    00000142
 CSEG INIT_PORTC   00000149
@@ -768,7 +768,7 @@ CSEG DISPLAY_fechaB 000001c6
 CSEG DISPLAY_fechaC 000001d2
 CSEG DISPLAY_fechaD 000001de
 CSEG incremento_mes 000002bd
-CSEG decremento_mes 000002d7
+CSEG decremento_mes 000002d5
 CSEG incremento_dia 00000278
 CSEG decremento_dia 000002a0
 CSEG no_paso_nada 00000141
@@ -811,9 +811,9 @@ CSEG RESETACDM    000002cf
 CSEG SEGUIRA4M    000002c8
 CSEG chekeo_12    000002c9
 CSEG SEGUIRA5M    000002ce
-CSEG RESET2ACDM   000002d3
-CSEG decrementA_CDM 000002dc
-CSEG MAXEO_12     000002e3
-CSEG EXIT_TMR0_ISR 00000328
-CSEG check_24     00000308
-CSEG salidita     0000033a
+CSEG RESET2ACDM   000002d2
+CSEG decrementA_CDM 000002da
+CSEG MAXEO_12     000002e1
+CSEG EXIT_TMR0_ISR 00000326
+CSEG check_24     00000306
+CSEG salidita     00000338

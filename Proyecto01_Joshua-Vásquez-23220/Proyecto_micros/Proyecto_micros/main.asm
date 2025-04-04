@@ -929,13 +929,11 @@ incremento_mes:
 	CPSE	fechaD, R16
 	RJMP	SEGUIRA3M
 	CALL	RESETACDM
-	
 SEGUIRA3M:
 	LDI		R16, 0x01
 	CPSE	fechaC, R16		//decena del mes
 	RJMP	SEGUIRA4M
 	CALL	chekeo_12
-	
 SEGUIRA4M: 
 	RET
 chekeo_12:
@@ -947,16 +945,14 @@ SEGUIRA5M:
 	RET
 
 RESETACDM:
-	LDI		R16, 0x00
-	MOV		fechaD, R16
+	CLR		fechaD
 	INC		fechaC
 	RJMP	void_loop
 
 RESET2ACDM:
-	LDI		R16, 0x00
-	MOV		fechaD, R16
+	CLR		fechaD
 	CLR		fechaC
-	RJMP	void_loop
+	RJMP	void_loop	
 
 decremento_mes:	
 	DEC		fechaD		
@@ -1108,4 +1104,6 @@ INT_BOTONAZOC:
 	POP		R16
 	OUT		SREG, R16
 	POP		R16
-	RETI
+	RETI 
+
+
