@@ -15,6 +15,7 @@
 //******************************************
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 #define F_CPU 16000000
 
 // Variables globales
@@ -55,8 +56,8 @@ void setup()
 	PORTC |= (1 << PORTC0) | (1 << PORTC1);
 	
 	// 3. Configuración de PORTB para los transistores (PB0, PB1, PB2 como salidas)
-	DDRB |= (1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2);
-	PORTB &= ~((1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2)); // Todos apagados inicialmente
+	DDRB |= (1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2) | (1 << PORTB3);
+	//PORTB &= ~((1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2) | (1 << PORTB3) ); // Todos apagados inicialmente
 	
 	// 4. Timer0 para antirrebote (~10ms con 16MHz)
 	TCCR0A = 0x00;
@@ -75,7 +76,7 @@ void setup()
 
 	// 6. Estado inicial
 	counter = 0;
-	update_leds();
+	//update_leds();
 	sei();
 }
 void initADC()
@@ -106,27 +107,32 @@ int main(void)
 	
 	while (1)
 	{
+		_delay_ms(10);
 	}
 }
 // Interrupción para multiplexado RÁPIDO (Timer2)
 ISR(TIMER2_OVF_vect) {
 	// Apagar todos los transistores primero
-	PORTB &= ~((1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2));
+	
 	
 	// Encender solo el transistor actual
 	switch(mux_state) {
 		case 0: // Decenas de segundos
+		PORTB &= ~((1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2));
 		PORTD = tabla_7seg[(adc_value >> 4) & 0x0F];
 		PORTB |= (1 << PORTB0);
 		break;
 		case 1: //Unidades de segundo 
+		PORTB &= ~((1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2));
 		PORTD = tabla_7seg[adc_value & 0x0F];
 		PORTB |= (1 << PORTB1);
+		
 		break;
-		case 2:
-		PORTD = 0X00;
-		update_leds();
+		case 2: //LEDS
+		PORTB &= ~((1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2));
 		PORTB |= (1 << PORTB2);
+		update_leds();
+	
 		break;
 	}
 	
