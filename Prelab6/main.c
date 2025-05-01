@@ -25,7 +25,7 @@ void initADC();
 uint16_t leerADC(uint8_t canal);
 void writeChar(char caracter);
 void writeString(char* texto);
-void enviarNumero(uint8_t valor);
+void enviarNumero(uint16_t valor);
 
 volatile char received_char;
 volatile uint8_t new_data = 0;
@@ -51,15 +51,16 @@ int main(void) {
 		if (received_char == '0') { 
 			writeString("Modo Potenciometro\n");
 			uint16_t lectura = leerADC(0);
-			uint8_t valor = (lectura * 255UL) / 1023;  // Convertir a 8 bits
+			writeString("ADC0 (10 bits): ");
+			enviarNumero(lectura);  // debe ir de 0 a 1023
+			uint8_t valor = (uint8_t)(lectura * 255.0 / 1023.0);  // Convertir a 8 bits
 			//uint8_t valor = lectura;
 			 // Mostrar en LEDs con sus máscaras
 			 PORTB = valor & 0x1F; // bits 0-4 a PORTB
 			 PORTD = (PORTD & 0x1F) | (valor & 0xE0); // bits 5-7 a PD5-PD7
-			writeString("ADC0 (10 bits): ");
-			writeChar(lectura);
 			writeString(" -> 8 bits: ");
-			enviarNumero(lectura);
+			
+			enviarNumero(valor);
 			writeString("\n");
 			  
 
@@ -78,7 +79,7 @@ int main(void) {
 		}
 	}
 	//Modo Ascii
-	else if (modo_asqi = 1){ 
+	else if (modo_asqi == 1){ 
 		 PORTB = received_char & 0x1F; 
 		 PORTD = (PORTD & 0x1F) | ((received_char & 0xE0) >> 3); 
 		  writeString("\nCaracter recibido: ");
@@ -142,7 +143,7 @@ uint16_t leerADC(uint8_t canal) {
 	 ADMUX = (ADMUX & 0xF0) | (canal & 0x0F); // Seleccionar canal
 	 ADCSRA |= (1 << ADSC); // Iniciar conversión
 	 while (ADCSRA & (1 << ADSC));
-	 return ADC >> 2; // Convertir a 8 bits
+	 return ADC; //
 
 	
 }	
@@ -159,9 +160,12 @@ void writeString(char*texto){
 	
 }
 
-void enviarNumero(uint8_t numero) {
+void enviarNumero(uint16_t numero) {
+	if (numero >= 1000) {
+		writeChar('0' + (numero / 1000));
+	}
 	if (numero >= 100) {
-		writeChar('0' + (numero / 100));
+		writeChar('0' + ((numero / 100) % 10));
 	}
 	if (numero >= 10) {
 		writeChar('0' + ((numero / 10) % 10));
