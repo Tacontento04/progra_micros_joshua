@@ -15,8 +15,15 @@
 //******************************************
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <stdbool.h>
 #define F_CPU 16000000
 #include <util/delay.h>
+#define zona_reposo 50  // rango pote quieto
+#define center 512      // centro del potenciometro
+#define DEAD_ZONE 70// Ajusta según necesidad
+#define CENTER 512    // Valor central del joystick
+
+
 
 //**************************************
 //Prototipos de funciones
@@ -72,8 +79,8 @@ int main(void)
 		//uint8_t vel2 = (uint8_t)(readADC2 * 255.0 / 1023.0);  // Convertir a 8 bits
 		//PWM_setVel2(vel2);
 		//Controlando motor 3
-			uint16_t lectura = leerADC(0);
-			uint16_t readADC2 = leerADC(1);
+			uint16_t lectura = leerADC(1);
+			uint16_t readADC2 = leerADC(0);
 			control_motor(lectura, readADC2);
 			Joystick_X(lectura);
 			Joystick_Y(readADC2);
@@ -157,53 +164,60 @@ void PWM_setVel4(uint16_t vel4) {
 	OCR2A = vel4;
 }
 
-void control_motor(uint16_t X, uint16_t Y){
+void control_motor(uint16_t X, uint16_t Y) {
+	// Primero determinamos si estamos en zona muerta para Y
+	bool y_active = (Y < (CENTER - DEAD_ZONE)) || (Y > (CENTER + DEAD_ZONE));
 	
-	if (Y >= 0 && Y < 480){
-		
-		//AVANZAR PARA ENFRENTE
-		PORTB |= (1 << PORTB5);
-		PORTC |= (1 << PORTC3);    // Enciende PORTC3
-		PORTC &= ~((1 << PORTC2) | (1 << PORTC4));  // Apaga PORTC2 y PORTC4
-		
-		} else if( Y > 520 && Y < 1023){
-		
-		//PARA ATRAS
-		PORTB &= ~(1 << PORTB5);
+	// Luego para X
+	bool x_active = (X < (CENTER - DEAD_ZONE)) || (X > (CENTER + DEAD_ZONE));
 
-		PORTC |= (1 << PORTC2) | (1 << PORTC4);  // Encender PORTC2 y PORTC4
-		PORTC &= ~(1 << PORTC3);                  // Apagar PORTC3
-		
-	
-		}else {
+	// Movimiento principal basado en Y (avance/retroceso)
+	if (y_active) {
+		if (Y < (CENTER - DEAD_ZONE)) {
+			// AVANZAR
 			
-		if(X >= 0 && X < 480){
-			//AVANZAR PARA la izquierda
 			PORTB |= (1 << PORTB5);
-			PORTC &= ~((1 << PORTC2) | (1 << PORTC3));  // Apagar PORTC2 y PORTC3
-			PORTC |= (1 << PORTC4);                     // Encender PORTC4
+			PORTC |= (1 << PORTC3);
+			PORTC &= ~((1 << PORTC2) | (1 << PORTC4));
 			
+			} else {
+				
+				
+			// RETROCEDER
+			PORTB &= ~(1 << PORTB5);
+			PORTC |= (1 << PORTC2) | (1 << PORTC4);
+			PORTC &= ~(1 << PORTC3);
 			
-		}else if( X > 520 && X < 1023){
-			
+		}
+	}
+	
+	// Giro basado en X (solo si no hay movimiento en Y o para combinaciones)
+	if (x_active && !y_active) {
+		if (X < (CENTER - DEAD_ZONE)) {
+			// GIRO IZQUIERDA (motor derecho adelante, izquierdo atrás)
+				//AVANZAR PARA la izquierda
+				PORTB |= (1 << PORTB5);
+				PORTC &= ~((1 << PORTC2) | (1 << PORTC3));  // Apagar PORTC2 y PORTC3
+				PORTC |= (1 << PORTC4);                     // Encender PORTC4
+			} else {
 			//AVANZAR PARA la derecha
 			PORTB &= ~(1 << PORTB5);
 			PORTC |= (1 << PORTC2) | (1 << PORTC3);  // Encender bits 2 y 3
 			PORTC &= ~(1 << PORTC4);                   // Apagar bit 4
-			
-		}else {	
-			
-		//motor sin moverse
-		PORTB &= ~(1 << PORTB5);
-		PORTC &= ~(1 << PORTC2); // aPAGAR LED
-		PORTC &= ~(1 << PORTC3); // aPAGAR LED
-		PORTC &= ~(1 << PORTC4); // aPAGAR LED
 		}
 	}
-	
-	
-	
-	
+	/*
+	// Combinación de movimientos (ejemplo: diagonal)
+	if (x_active && y_active) {
+		// Implementa lógica para movimientos combinados
+		// Por ejemplo, avance con giro suave
+	}
+	*/
+	// Detener si no hay movimiento
+	if (!x_active && !y_active) {
+		PORTB &= ~(1 << PORTB5);
+		PORTC &= ~((1 << PORTC2) | (1 << PORTC3) | (1 << PORTC4));
+	}
 }
 
 void Joystick_X(uint16_t lectura){
